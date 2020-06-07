@@ -11,5 +11,7 @@ read key
 echo $key > key.txt
 
 cp -r ./ /usr/local/src/BotPlanning/
+cd /usr/local/src/BotPlanning
+git config pull.rebase false
 
 systemctl enable botplanning.service --now
