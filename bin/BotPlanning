@@ -1,0 +1,7 @@
+#!/bin/sh
+
+cd /usr/local/src/BotPlanning/
+source env/bin/activate
+
+python main.py
+

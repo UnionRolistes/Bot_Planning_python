@@ -1,0 +1,14 @@
+[Unit]
+Description=Discord Bot for unionrolistes.fr
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/BotPlanning
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+
