@@ -9,8 +9,8 @@ read key
 echo "Entrez le salt utilisé par la page web: "
 read salt
 
-echo $key > /etc/BotPlanning/key.txt
-echo $salt > /etc/BotPlanning/salt.txt
+echo $key > /usr/local/etc/BotPlanning/key.txt
+echo $salt > /usr/local/etc/BotPlanning/salt.txt
 
 cp -r ./ /usr/local/src/BotPlanning/
 cd /usr/local/src/BotPlanning

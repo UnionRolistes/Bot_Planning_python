@@ -15,7 +15,7 @@ class Bot_Planing(discord.Client):
 
                 def getToken(user):
                     day = ("0" + str(datetime.date.day))[-2:]
-                    salt = open("/home/tonitch/.config/botplanning/salt.txt").read()
+                    salt = open("/usr/local/etc/salt.txt").read()
                     token = user + salt + day
                     hash = hashlib.md5(token.encode()).hexdigest()
                     return f"https://urplanning.unionrolistes.fr/?token={hash}"
@@ -28,7 +28,7 @@ class Bot_Planing(discord.Client):
 
 def main():
     app = Bot_Planing()
-    app.run(open("/home/tonitch/.config/botplanning/key.txt").read())
+    app.run(open("/usr/local/etc/key.txt").read())
 
 if __name__ == "__main__":
     main()
