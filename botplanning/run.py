@@ -14,11 +14,11 @@ class Bot_Planing(discord.Client):
             if msg.content.startswith("$cal"):
 
                 def getToken(user):
-                    day = ("0" + str(datetime.date.day))[-2:]
+                    day = datetime.datetime.now().strftime("%d")
                     salt = open("/usr/local/etc/BotPlanning/salt.txt").read()
                     token = user + salt + day
                     hash = hashlib.md5(token.encode()).hexdigest()
-                    return f"https://urplanning.unionrolistes.fr/?token={hash}"
+                    return f"http://urplanning.unionrolistes.fr/?token={hash}"
 
                 await msg.delete()
                 await msg.channel.send(f"{msg.author.mention}, Veuillez suivre le lien suivvant qui va vous être envoyé en MP")
