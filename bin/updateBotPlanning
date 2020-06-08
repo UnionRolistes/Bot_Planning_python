@@ -1,7 +1,0 @@
-#!/bin/sh
-
-cd /usr/local/src/BotPlanning
-
-git pull 
-
-systemctl restart botplanning.service

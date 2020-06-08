@@ -5,7 +5,8 @@ After=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/BotPlanning
+ExecStart=/usr/local/src/BotPlanning/botrunner.py start
+ExecStop=/usr/local/src/BotPlanning/botrunner.py stop
 Restart=always
 RestartSec=5s
 

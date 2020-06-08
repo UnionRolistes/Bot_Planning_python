@@ -1,2 +1,5 @@
 key.txt
 salt.txt
+env
+venv
+__pycache__
