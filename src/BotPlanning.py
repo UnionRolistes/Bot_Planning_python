@@ -1,4 +1,4 @@
-#!/env/bin/python
+#!/usr/bin/env python
 import discord
 import datetime
 import hashlib
@@ -26,9 +26,17 @@ class Bot_Planing(discord.Client):
                 await msg.author.send(f"{msg.author.mention} utilise le lien suivant : {userToken}")
 
 
+def getKey():
+    try:
+        keypath = "/usr/local/etc/BotPlanning/key.txt"
+        key = open(keypath).read()
+        return key;
+    except FileNotFoundError:
+        raise Exception("Bot Key not set on {}: No files".format(keypath))
+
 def main():
     app = Bot_Planing()
-    app.run(open("/usr/local/etc/BotPlanning/key.txt").read())
+    app.run(getKey())
 
 if __name__ == "__main__":
     main()
