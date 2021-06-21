@@ -1,7 +1,77 @@
-
 - Changelog for v2.0.16 (2021-06-21)
   
     * Create changelog.txt
     * Renamed project folder
     
-    
+
+Commits on Mar 15, 2021
+
+    Update README.md
+    @Daebis
+    Daebis committed on 15 Mar
+
+Commits on Jan 7, 2021
+
+    Merge pull request #1 from tonitch/master 
+
+@tonitch
+tonitch committed on 7 Jan
+
+Adding Readme
+@tonitch
+tonitch committed on 7 Jan
+
+Commits on Jan 6, 2021
+
+    .
+    @tonitch
+    tonitch committed on 6 Jan
+
+Commits on Jun 8, 2020
+
+    rectification
+    @tonitch
+    tonitch committed on 8 Jun 2020
+
+rectification
+@tonitch
+tonitch committed on 8 Jun 2020
+
+rectification
+@tonitch
+tonitch committed on 8 Jun 2020
+
+delete env, adding correct deamon
+@tonitch
+tonitch committed on 8 Jun 2020
+
+adding requirements.txt
+@tonitch
+tonitch committed on 8 Jun 2020
+
+minor correction
+@tonitch
+tonitch committed on 8 Jun 2020
+
+adding cal command + salt in setup
+@tonitch
+tonitch committed on 8 Jun 2020
+
+Merge remote-tracking branch 'refs/remotes/origin/master'
+@tonitch
+tonitch committed on 8 Jun 2020
+
+Commits on Jun 7, 2020
+
+    adding auto-installer setup.sh
+    @tonitch
+    tonitch committed on 7 Jun 2020
+
+adding auto-installer setup.sh
+@tonitch
+tonitch committed on 7 Jun 2020
+
+First Commit
+@tonitch
+tonitch committed on 7 Jun 2020
+  
