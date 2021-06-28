@@ -13,7 +13,7 @@ import asyncio
 
 import discord
 from discord.ext import commands, tasks
-from URbot.planning import settings, strings
+from URbot.planning.src import settings, strings
 import re
 import discord.errors
 import requests
@@ -80,7 +80,7 @@ class Planning(commands.Cog):
         # noinspection PyTypeChecker
         self.planning_channel: discord.TextChannel = None
 
-        with open("modèle_fiche_planning.txt", 'r', encoding='utf8') as f:
+        with open("../modèle_fiche_planning.txt", 'r', encoding='utf8') as f:
             self.planning_announcement_model = f.read()
 
     @tasks.loop(seconds=10)
@@ -123,7 +123,8 @@ class Planning(commands.Cog):
                     await ctx.send(strings.on_cal_webhook_not_found.format(channel=settings.announcement_channel))
                 else:
                     await ctx.send(strings.on_cal)
-                    await ctx.author.send(strings.on_cal_link.format(link=f"http://{await get_public_ip()}.nip.io?webhook={webhook.url}"))
+                    await ctx.author.send(
+                        strings.on_cal_link.format(link=f"http://{await get_public_ip()}.nip.io?webhook={webhook.url}"))
 
     @commands.command()
     async def edit(self, ctx: commands.Context):
