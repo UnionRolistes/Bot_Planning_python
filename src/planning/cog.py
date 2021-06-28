@@ -7,22 +7,31 @@ Commandes :\n
     \t$cancel\n
 """
 
-import logging
-import sys
 import asyncio
+import logging
+import re
+import sys
 
 import discord
-from discord.ext import commands, tasks
-from URbot.planning.src import settings, strings
-import re
 import discord.errors
 import requests
-from utils import error_log
-from const import *
+from discord.ext import commands, tasks
+
+from importlib import resources
+from planning import strings
+from planning.const import *
+from planning.utils import error_log
+from planning import settings
+
 
 async def get_public_ip() -> str:
     """
     Return public IP.
+
+    @author Lyss
+    @mail <delpratflo@cy-tech.fr>
+    @date 28/06/21
+
 
     Returns
     -------
@@ -31,10 +40,13 @@ async def get_public_ip() -> str:
     """
     return requests.get('https://api.ipify.org').text
 
-
 async def get_informations(msg: discord.Message) -> dict[str, str]:
     """
     Extract information from an announcement message.
+
+    @author Lyss
+    @mail <delpratflo@cy-tech.fr>
+    @date 28/06/21
 
     Parameters
     ----------
@@ -57,9 +69,36 @@ async def get_informations(msg: discord.Message) -> dict[str, str]:
 
 class MyContext(commands.Context):
     def __init__(self, ctx: commands.Context):
+        """
+        Creates a Context whose messages sent are deleted by default.
+
+        @author Lyss
+        @mail <delpratflo@cy-tech.fr>
+        @date 28/06/21
+
+        Parameters
+        ----------
+        ctx : context to copy
+        """
         super().__init__(**ctx.__dict__)
 
     async def send(self, content=None, **kwargs):
+        """
+        Override Context.send to delete messages by default.
+
+        @author Lyss
+        @mail <delpratflo@cy-tech.fr>
+        @date 28/06/21
+
+        Parameters
+        ----------
+        content
+        kwargs
+
+        Returns
+        -------
+
+        """
         if 'delete_after' not in kwargs:
             kwargs['delete_after'] = settings.msg_delete_delay
         await self.message.delete(delay=settings.msg_delete_delay)
@@ -69,9 +108,13 @@ class MyContext(commands.Context):
 class Planning(commands.Cog):
     """
     A set of commands and utils functions.
-    """
 
+    @author Lyss
+    @mail <delpratflo@cy-tech.fr>
+    @date 28/06/21
+    """
     def __init__(self, bot: commands.Bot):
+
         """ Create a cog dedicated to Planning management. """
         self.users_edit_mode = {}
         self.bot: commands.Bot = bot
@@ -80,8 +123,8 @@ class Planning(commands.Cog):
         # noinspection PyTypeChecker
         self.planning_channel: discord.TextChannel = None
 
-        with open("../modèle_fiche_planning.txt", 'r', encoding='utf8') as f:
-            self.planning_announcement_model = f.read()
+        self.planning_announcement_model = resources.read_text('planning', 'modèle_fiche_planning.txt')
+
 
     @tasks.loop(seconds=10)
     async def empty_delete_queue(self):
@@ -234,7 +277,7 @@ class Planning(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         self.planning_channel = discord.utils.get(self.bot.get_all_channels(), name="planning-jdr")
-        print("We have logged in as {}!".format(self.bot.user))
+        print("\t| Planning started.")
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
@@ -289,7 +332,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     ur_bot = commands.Bot(command_prefix=settings.command_prefix)
     ur_bot.add_cog(Planning(ur_bot))
-    with open('../../bot_token', 'r') as f:
+    with open('../../../bot_token', 'r') as f:
         bot_token = f.read()
 
     ur_bot.run(bot_token)
