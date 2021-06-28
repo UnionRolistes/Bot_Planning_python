@@ -17,9 +17,8 @@ from URbot.planning import settings, strings
 import re
 import discord.errors
 import requests
-from URbot.planning.const import *
-from URbot.utils import error_log
-
+from utils import error_log
+from const import *
 
 async def get_public_ip() -> str:
     """
