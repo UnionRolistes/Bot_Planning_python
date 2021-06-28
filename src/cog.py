@@ -289,4 +289,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     ur_bot = commands.Bot(command_prefix=settings.command_prefix)
     ur_bot.add_cog(Planning(ur_bot))
-    ur_bot.run(settings.bot_token)
+    with open('../../bot_token', 'r') as f:
+        bot_token = f.read()
+
+    ur_bot.run(bot_token)
