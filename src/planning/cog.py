@@ -17,12 +17,13 @@ import discord.errors
 import requests
 from discord.ext import commands, tasks
 
-from importlib import resources
 from planning import strings
 from planning.const import *
 from planning.utils import error_log
 from planning import settings
 
+from importlib import resources
+import planning.info
 
 async def get_public_ip() -> str:
     """
@@ -136,7 +137,7 @@ class Planning(commands.Cog):
     @commands.command()
     async def cal(self, ctx: commands.Context):
         """
-        <em> Bot command </em> that sends a link in dms to create a new game.
+        Envoie un lien pour créer une partie
         This command only works on a guild that owns a properly named channel
         with a webhook.
         Channel name is editable in the settings module.
@@ -172,6 +173,7 @@ class Planning(commands.Cog):
     @commands.command()
     async def edit(self, ctx: commands.Context):
         """
+        Édite un message
         <em> Bot command </em> starting edit mode.<br>
             You can only edit a game you've created.<br>
             Editing occurs in dms via a series of questions.
@@ -232,6 +234,19 @@ class Planning(commands.Cog):
             minors_allowed=infos['pj mineur']
         )
         return new_descr
+
+    @staticmethod
+    def get_credits():
+        return resources.read_text(planning.info, 'credits.txt')
+
+    @staticmethod
+    def get_version():
+        """ Return version.txt of bot. """
+        return resources.read_text(planning.info, 'version.txt')
+
+    @staticmethod
+    def get_name():
+        return resources.read_text(planning.info, 'name.txt')
 
     @commands.Cog.listener()
     async def on_message(self, msg: discord.Message):
