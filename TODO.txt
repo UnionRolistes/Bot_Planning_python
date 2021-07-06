@@ -1,0 +1,11 @@
+sécurité
+s'assuer que les gens ne puissent pas spammer les réactions
+utiliser plutôt Reaction.message pour obtenir le message
+
+https://discord.com/api/webhooks/857045646220984350/62viiYTAQEislCPUzijqUSBL41en2XXdWskpYpi_ZhgQamwBtzfwUBFo8A1iG4iytyAX
+webhook through get for development purpose
+
+"""
+Le bot discord de l'Union des Rôlistes a pour but d'automatiser l'organisation
+de parties de JDR et des différentes tâches d'administration.
+"""

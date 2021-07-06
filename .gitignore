@@ -3,3 +3,5 @@ salt.txt
 env
 venv
 __pycache__
+dist
+.idea
