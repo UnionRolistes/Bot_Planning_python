@@ -41,3 +41,4 @@ platform_to_emoji = {v: k for k, v in emoji_to_platform.items()}
 
 EDIT_MODE_PROMPT = 0
 EDIT_MODE_CONTENT = 1
+EDIT_MODE_FINISHED = 2

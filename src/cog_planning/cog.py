@@ -7,106 +7,28 @@ Commandes :\n
     \t$cancel\n
 """
 
-import asyncio
+import sys
 import logging
 import re
-import sys
+from importlib import resources
 
 import discord
 import discord.errors
-import requests
-from discord.ext import commands, tasks
+from discord.ext import commands
 
-from planning import strings
-from planning.const import *
-from planning.utils import error_log
-from planning import settings
+import urpy
+from urpy.utils import error_log, get_public_ip, get_informations
 
-from importlib import resources
-import planning.info
-
-async def get_public_ip() -> str:
-    """
-    Return public IP.
-
-    @author Lyss
-    @mail <delpratflo@cy-tech.fr>
-    @date 28/06/21
+import bot.URbot
+from cog_planning.const import *
+from cog_planning import strings
 
 
-    Returns
-    -------
-        str
-            IP address.
-    """
-    return requests.get('https://api.ipify.org').text
-
-async def get_informations(msg: discord.Message) -> dict[str, str]:
-    """
-    Extract information from an announcement message.
-
-    @author Lyss
-    @mail <delpratflo@cy-tech.fr>
-    @date 28/06/21
-
-    Parameters
-    ----------
-        msg : str
-            Announcement message.
-
-    Returns
-    -------
-        dict[str, str]
-            A dict linking an information name to its value.
-            Ex: " ** Type ** One Shoot  " becomes {'type': 'One Shoot'}
-    """
-    infos = {}
-
-    # Matches strings of the form : ' ** {name} **  {value} ' ending on ':', '**' or '\n'
-    for match in re.finditer("\*\*(.*)\*\* *(?:\n| )(.*)\n(?::|\*\*|\n)", msg.embeds[0].description):
-        infos[match.group(1).strip().lower()] = match.group(2)
-    return infos
+from cog_planning import settings
+import cog_planning.info
 
 
-class MyContext(commands.Context):
-    def __init__(self, ctx: commands.Context):
-        """
-        Creates a Context whose messages sent are deleted by default.
-
-        @author Lyss
-        @mail <delpratflo@cy-tech.fr>
-        @date 28/06/21
-
-        Parameters
-        ----------
-        ctx : context to copy
-        """
-        super().__init__(**ctx.__dict__)
-
-    async def send(self, content=None, **kwargs):
-        """
-        Override Context.send to delete messages by default.
-
-        @author Lyss
-        @mail <delpratflo@cy-tech.fr>
-        @date 28/06/21
-
-        Parameters
-        ----------
-        content
-        kwargs
-
-        Returns
-        -------
-
-        """
-        if 'delete_after' not in kwargs:
-            kwargs['delete_after'] = settings.msg_delete_delay
-        await self.message.delete(delay=settings.msg_delete_delay)
-        await super().send(content, **kwargs)
-
-
-class Planning(commands.Cog):
+class Planning(urpy.MyCog):
     """
     A set of commands and utils functions.
 
@@ -114,76 +36,71 @@ class Planning(commands.Cog):
     @mail <delpratflo@cy-tech.fr>
     @date 28/06/21
     """
-    def __init__(self, bot: commands.Bot):
-
+    def __init__(self, bot: bot.URbot.URBot):
         """ Create a cog dedicated to Planning management. """
-        self.users_edit_mode = {}
-        self.bot: commands.Bot = bot
-        self.msgs_to_delete: asyncio.Queue[list] = asyncio.Queue()
-
-        # noinspection PyTypeChecker
+        super(Planning, self).__init__(bot)
+        self.edit_mode_users = {}
         self.planning_channel: discord.TextChannel = None
+        self.planning_announcement_model = urpy.get_planning_anncmnt_mdl()
 
-        self.planning_announcement_model = resources.read_text('planning', 'modèle_fiche_planning.txt')
-
-
-    @tasks.loop(seconds=10)
-    async def empty_delete_queue(self):
-        if self.msgs_to_delete:
-            msgs: list[discord.Message] = await self.msgs_to_delete.get()
-            for msg in msgs:
-                await msg.delete()
+        self.bot.add_to_command('edit', self.on_edit)
+        self.bot.add_to_command('done', self.on_done, self.on_cancel_or_done)
+        self.bot.add_to_command('cancel', self.on_cancel, self.on_cancel_or_done)
 
     @commands.command()
     async def cal(self, ctx: commands.Context):
         """
         Envoie un lien pour créer une partie
-        This command only works on a guild that owns a properly named channel
-        with a webhook.
-        Channel name is editable in the settings module.
 
-        Parameters
-        ----------
-        ctx: command context
+        Cette commande fonctionne seulement si le serveur possède un salon bien nommé et disposant d'un webhook.
+
+        Le nom du salon est modifiable dans les paramètres.
         """
-        ctx = MyContext(ctx)
+        ctx = urpy.MyContext(ctx, delete_after=6)
 
-        # checks that $cal is called in the right place
+        # checks location of $cal call
         if isinstance(ctx.channel, discord.DMChannel):
+            # DM Channel
             await ctx.send(strings.on_cal_dm_channel)
         elif isinstance(ctx.channel, discord.TextChannel):
+            # Text Channel
             anncmnt_channel = discord.utils.get(ctx.guild.channels, name=settings.announcement_channel)
             if not anncmnt_channel:
+                # Announcement channel not found
                 await ctx.send(strings.on_cal_channel_not_found.format(channel=settings.announcement_channel))
             else:
+                # Announcement channel found
                 try:
+                    # Try to get webhook
                     webhooks = await anncmnt_channel.webhooks()
                     webhook: discord.Webhook = webhooks[0]
                 except discord.errors.Forbidden:
+                    # Insufficient permissions
                     error_log("Impossible d'obtenir les webhooks.",
                               "Le bot nécessite la permission de gérer les webhooks")
                     await ctx.author.send(strings.on_permission_error)
                 except IndexError:
+                    # No webhooks found
                     await ctx.send(strings.on_cal_webhook_not_found.format(channel=settings.announcement_channel))
                 else:
+                    # Webhook found
                     await ctx.send(strings.on_cal)
+                    # sends link in dm
                     await ctx.author.send(
-                        strings.on_cal_link.format(link=f"http://{await get_public_ip()}.nip.io?webhook={webhook.url}"))
+                        strings.on_cal_link.format(link=f"http://urplanning.unionrolistes.fr?webhook={webhook.url}"))
 
-    @commands.command()
-    async def edit(self, ctx: commands.Context):
+    async def on_edit(self, ctx: commands.Context):
         """
         Édite un message
-        <em> Bot command </em> starting edit mode.<br>
-            You can only edit a game you've created.<br>
-            Editing occurs in dms via a series of questions.
 
-        Parameters
-        ----------
-        ctx: command context
+        Cette commande démarre le mode d'édition.
+
+        Vous pouvez seulement modifiez une annonce que vous avez créée.
+        L'édition se déroule en mp sous la forme d'une série de questions.
         """
-        ctx = MyContext(ctx)
+        ctx = urpy.MyContext(ctx, delete_after=6)
         channel = ctx.channel
+
         if isinstance(channel, discord.TextChannel) and channel.name == settings.announcement_channel:
             msg: discord.Message = ctx.message
             if not msg.reference:
@@ -215,7 +132,7 @@ class Planning(commands.Cog):
                     else:
                         await ctx.send(strings.on_edit_start)
                         # extracts information out of the message
-                        self.users_edit_mode[msg.author] = [msg_to_edit, infos, EDIT_MODE_PROMPT, "", webhooks[0]]
+                        self.edit_mode_users[msg.author] = [msg_to_edit, infos, EDIT_MODE_PROMPT, "", webhooks[0]]
                         await mj.send(strings.on_edit_prompt)
         else:
             await ctx.send(strings.on_edit_wrong_channel)
@@ -237,57 +154,62 @@ class Planning(commands.Cog):
 
     @staticmethod
     def get_credits():
-        return resources.read_text(planning.info, 'credits.txt')
+        return resources.read_text(cog_planning.info, 'credits.txt')
 
     @staticmethod
     def get_version():
         """ Return version.txt of bot. """
-        return resources.read_text(planning.info, 'version.txt')
+        return resources.read_text(cog_planning.info, 'version.txt')
 
     @staticmethod
     def get_name():
-        return resources.read_text(planning.info, 'name.txt')
+        return resources.read_text(cog_planning.info, 'name.txt')
 
     @commands.Cog.listener()
     async def on_message(self, msg: discord.Message):
         author: discord.User = msg.author
         channel = msg.channel
-        if isinstance(channel, discord.DMChannel) and author in self.users_edit_mode.keys():
-            msg_to_edit, infos, edit_mode, info_name, webhook = self.users_edit_mode[author]
-            if msg.content.startswith("$done") or msg.content.startswith("$cancel"):
-                del self.users_edit_mode[author]
-            elif edit_mode == EDIT_MODE_PROMPT:
+        if isinstance(channel, discord.DMChannel) and author in self.edit_mode_users.keys():
+            msg_to_edit, infos, edit_mode, info_name, webhook = self.edit_mode_users[author]
+
+            if edit_mode == EDIT_MODE_PROMPT:
                 info_to_change = msg.content.lower().strip()
                 if info_to_change in infos.keys():
-                    self.users_edit_mode[author][3] = info_to_change
-                    self.users_edit_mode[author][2] = EDIT_MODE_CONTENT
+                    self.edit_mode_users[author][3] = info_to_change
+                    self.edit_mode_users[author][2] = EDIT_MODE_CONTENT
                     await channel.send(strings.on_edit_content_prompt.format(info=f"**{info_to_change.capitalize()}**"))
                 else:
                     await channel.send(strings.on_edit_unrecognized)
             elif edit_mode == EDIT_MODE_CONTENT:
-                self.users_edit_mode[author][2] = EDIT_MODE_PROMPT
+                self.edit_mode_users[author][2] = EDIT_MODE_PROMPT
                 infos[info_name] = msg.content
                 await channel.send("", embed=discord.Embed(type='rich', description=self.create_descr(infos)))
                 await channel.send(strings.on_edit_prompt)
 
-        elif msg.author.bot and author.id != self.bot.user.id:
+        elif isinstance(channel, discord.TextChannel) and msg.author.bot and author.id != self.bot.user.id and channel.name==settings.announcement_channel:
             # await ctx.author.send("Création réussie, l'Union des Rôlistes vous souhaite une belle expérience !")
             await msg.add_reaction("✅")
             await msg.add_reaction("❌")
 
-    @commands.command()
-    async def done(self, ctx: commands.Context):
-        if isinstance(ctx.channel, discord.DMChannel) and ctx.author in self.users_edit_mode.keys():
-            msg: discord.Message = self.users_edit_mode[ctx.author][0]
+    async def on_done(self, ctx: commands.Context):
+        if isinstance(ctx.channel, discord.DMChannel) and ctx.author in self.edit_mode_users.keys():
+            self.edit_mode_users[ctx.author][2] = EDIT_MODE_FINISHED
+            msg: discord.Message = self.edit_mode_users[ctx.author][0]
             embed = msg.embeds[0].copy()
-            embed.description = self.create_descr(self.users_edit_mode[ctx.author][1], 1)
-            await self.users_edit_mode[ctx.author][4].edit_message(msg.id, embed=embed)
+            embed.description = self.create_descr(self.edit_mode_users[ctx.author][1], 1)
+            await self.edit_mode_users[ctx.author][4].edit_message(msg.id, embed=embed)
             await ctx.send(strings.on_edit_success)
 
-    @commands.command()
-    async def cancel(self, ctx: commands.Context):
-        if isinstance(ctx.channel, discord.DMChannel) and ctx.author in self.users_edit_mode.keys():
+    async def on_cancel(self, ctx: commands.Context):
+        if isinstance(ctx.channel, discord.DMChannel) and ctx.author in self.edit_mode_users.keys():
+            self.edit_mode_users[ctx.author][2] = EDIT_MODE_FINISHED
             await ctx.send(strings.on_edit_cancel)
+
+    async def on_cancel_or_done(self, ctx: commands.Context):
+        msg = ctx.message
+        author = ctx.author
+
+        del self.edit_mode_users[author]
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -347,7 +269,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     ur_bot = commands.Bot(command_prefix=settings.command_prefix)
     ur_bot.add_cog(Planning(ur_bot))
-    with open('../../../bot_token', 'r') as f:
+    with open('../../../../../bot_token', 'r') as f:
         bot_token = f.read()
 
     ur_bot.run(bot_token)
