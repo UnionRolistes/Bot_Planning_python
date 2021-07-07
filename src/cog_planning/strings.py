@@ -1,5 +1,5 @@
-on_join = "Célébrations ! {user} a rejoint le JDR !"
-on_leave = "Ôrage, eau des espoirs... {user} nous a quitté. Méchant {user}."
+on_join = "🎉 Célébrations ! {user} a rejoint le JDR !"
+on_leave = "😭 Ô rage, ô désespoir... {user} nous a quitté. Méchant {user}."
 on_edit_without_reply = "Vous devez répondre à un message pour l'éditer !"
 on_edit_wrong_channel = "Vous ne pouvez pas éditer dans ce salon !"
 on_edit_start = "C'est parti ! Rejoignez-moi dans vos dms."
