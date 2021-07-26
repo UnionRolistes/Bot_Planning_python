@@ -1,7 +1,7 @@
 """
 Cog regroupant les fonctions de gestion du planning.\n
 Commandes :\n
-    \t$cal\n
+    \t$jdr\n
     \t$edit\n
     \t$done\n
     \t$cancel\n
@@ -38,8 +38,10 @@ class Planning(urpy.MyCog):
     """
     def __init__(self, bot: bot.URbot.URBot):
         """ Create a cog dedicated to Planning management. """
-        super(Planning, self).__init__(bot)
+        super(Planning, self).__init__(bot, 'cog_planning')
         self.edit_mode_users = {}
+        bot.localization.add_translation(self.domain, ['fr'])  # TODO move to urpy
+        self._ = lambda s: bot.localization.gettext(s, self.domain)  # TODO partial tools
         self.planning_channel: discord.TextChannel = None
         self.planning_announcement_model = urpy.get_planning_anncmnt_mdl()
 
@@ -47,8 +49,8 @@ class Planning(urpy.MyCog):
         self.bot.add_to_command('done', self.on_done, self.on_cancel_or_done)
         self.bot.add_to_command('cancel', self.on_cancel, self.on_cancel_or_done)
 
-    @commands.command()
-    async def cal(self, ctx: commands.Context):
+    @commands.command(brief=strings.jdr_brief, help=strings.jdr_help)
+    async def jdr(self, ctx: commands.Context):
         """
         Envoie un lien pour créer une partie
 
@@ -58,16 +60,16 @@ class Planning(urpy.MyCog):
         """
         ctx = urpy.MyContext(ctx, delete_after=6)
 
-        # checks location of $cal call
+        # checks location of $jdr call
         if isinstance(ctx.channel, discord.DMChannel):
             # DM Channel
-            await ctx.send(strings.on_cal_dm_channel)
+            await ctx.send(self._(strings.on_jdr_dm_channel))
         elif isinstance(ctx.channel, discord.TextChannel):
             # Text Channel
             anncmnt_channel = discord.utils.get(ctx.guild.channels, name=settings.announcement_channel)
             if not anncmnt_channel:
                 # Announcement channel not found
-                await ctx.send(strings.on_cal_channel_not_found.format(channel=settings.announcement_channel))
+                await ctx.send(self._(strings.on_jdr_channel_not_found).format(channel=settings.announcement_channel))
             else:
                 # Announcement channel found
                 try:
@@ -78,16 +80,16 @@ class Planning(urpy.MyCog):
                     # Insufficient permissions
                     error_log("Impossible d'obtenir les webhooks.",
                               "Le bot nécessite la permission de gérer les webhooks")
-                    await ctx.author.send(strings.on_permission_error)
+                    await ctx.author.send(self._(strings.on_permission_error))
                 except IndexError:
                     # No webhooks found
-                    await ctx.send(strings.on_cal_webhook_not_found.format(channel=settings.announcement_channel))
+                    await ctx.send(self._(strings.on_jdr_webhook_not_found).format(channel=settings.announcement_channel))
                 else:
                     # Webhook found
-                    await ctx.send(strings.on_cal)
+                    await ctx.send(self._(strings.on_jdr))
                     # sends link in dm
-                    await ctx.author.send(
-                        strings.on_cal_link.format(link=f"http://urplanning.unionrolistes.fr?webhook={webhook.url}"))
+                    await ctx.author.send(self._(
+                        strings.on_jdr_link).format(link=f"http://urplanning.unionrolistes.fr?webhook={webhook.url}"))
 
     async def on_edit(self, ctx: commands.Context):
         """
@@ -104,9 +106,9 @@ class Planning(urpy.MyCog):
         if isinstance(channel, discord.TextChannel) and channel.name == settings.announcement_channel:
             msg: discord.Message = ctx.message
             if not msg.reference:
-                await ctx.send(strings.on_edit_without_reply)
+                await ctx.send(self._(strings.on_edit_without_reply))
             elif not msg.reference.resolved.author.bot:
-                await ctx.send(strings.on_edit_not_editable)
+                await ctx.send(self._(strings.on_edit_not_editable))
             else:
                 msg_to_edit: discord.Message = msg.reference.resolved
 
@@ -125,17 +127,17 @@ class Planning(urpy.MyCog):
                     # sends a copy of announce in the dms
                     await mj.send("", embed=discord.Embed(type='rich', description=self.create_descr(infos)))
                 except IndexError:
-                    await ctx.send(strings.on_edit_not_editable)
+                    await ctx.send(self._(strings.on_edit_not_editable))
                 else:
                     if mj != ctx.author:
-                        await ctx.send(strings.on_edit_not_mj)
+                        await ctx.send(self._(strings.on_edit_not_mj))
                     else:
-                        await ctx.send(strings.on_edit_start)
+                        await ctx.send(self._(strings.on_edit_start))
                         # extracts information out of the message
                         self.edit_mode_users[msg.author] = [msg_to_edit, infos, EDIT_MODE_PROMPT, "", webhooks[0]]
-                        await mj.send(strings.on_edit_prompt)
+                        await mj.send(self._(strings.on_edit_prompt))
         else:
-            await ctx.send(strings.on_edit_wrong_channel)
+            await ctx.send(self._(strings.on_edit_wrong_channel))
 
     def create_descr(self, infos, b=0):
         new_descr = self.planning_announcement_model.format(
@@ -177,14 +179,14 @@ class Planning(urpy.MyCog):
                 if info_to_change in infos.keys():
                     self.edit_mode_users[author][3] = info_to_change
                     self.edit_mode_users[author][2] = EDIT_MODE_CONTENT
-                    await channel.send(strings.on_edit_content_prompt.format(info=f"**{info_to_change.capitalize()}**"))
+                    await channel.send(self._(strings.on_edit_content_prompt).format(info=f"**{info_to_change.capitalize()}**"))
                 else:
-                    await channel.send(strings.on_edit_unrecognized)
+                    await channel.send(self._(strings.on_edit_unrecognized))
             elif edit_mode == EDIT_MODE_CONTENT:
                 self.edit_mode_users[author][2] = EDIT_MODE_PROMPT
                 infos[info_name] = msg.content
                 await channel.send("", embed=discord.Embed(type='rich', description=self.create_descr(infos)))
-                await channel.send(strings.on_edit_prompt)
+                await channel.send(self._(strings.on_edit_prompt))
 
         elif isinstance(channel, discord.TextChannel) and msg.author.bot and author.id != self.bot.user.id and channel.name==settings.announcement_channel:
             # await ctx.author.send("Création réussie, l'Union des Rôlistes vous souhaite une belle expérience !")
@@ -198,12 +200,12 @@ class Planning(urpy.MyCog):
             embed = msg.embeds[0].copy()
             embed.description = self.create_descr(self.edit_mode_users[ctx.author][1], 1)
             await self.edit_mode_users[ctx.author][4].edit_message(msg.id, embed=embed)
-            await ctx.send(strings.on_edit_success)
+            await ctx.send(self._(strings.on_edit_success))
 
     async def on_cancel(self, ctx: commands.Context):
         if isinstance(ctx.channel, discord.DMChannel) and ctx.author in self.edit_mode_users.keys():
             self.edit_mode_users[ctx.author][2] = EDIT_MODE_FINISHED
-            await ctx.send(strings.on_edit_cancel)
+            await ctx.send(self._(strings.on_edit_cancel))
 
     async def on_cancel_or_done(self, ctx: commands.Context):
         msg = ctx.message
