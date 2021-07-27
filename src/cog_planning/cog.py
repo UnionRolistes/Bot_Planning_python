@@ -17,7 +17,7 @@ import discord.errors
 from discord.ext import commands
 
 import urpy
-from urpy.utils import error_log, get_public_ip, get_informations
+from urpy.utils import error_log, get_public_ip, get_informations, log
 
 import bot.URbot
 from cog_planning.const import *
@@ -216,7 +216,7 @@ class Planning(urpy.MyCog):
     @commands.Cog.listener()
     async def on_ready(self):
         self.planning_channel = discord.utils.get(self.bot.get_all_channels(), name="planning-jdr")
-        print("\t| Planning started.")
+        log("\t| Planning started.")
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
