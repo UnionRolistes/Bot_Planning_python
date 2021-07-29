@@ -6,7 +6,7 @@ Commandes :\n
     \t$done\n
     \t$cancel\n
 """
-
+import pickle
 import sys
 import logging
 import re
@@ -26,6 +26,7 @@ from cog_planning import strings
 
 from cog_planning import settings
 import cog_planning.info
+from xml import Calendar
 
 
 class Planning(urpy.MyCog):
@@ -76,6 +77,9 @@ class Planning(urpy.MyCog):
                     # Try to get webhook
                     webhooks = await anncmnt_channel.webhooks()
                     webhook: discord.Webhook = webhooks[0]
+                    Calendar.creators_to_webhook[ctx.author.id] = webhook
+                    with open('/tmp/cal', 'wp') as f:
+                        pickle.dump(Calendar.creators_to_webhook, f)
                 except discord.errors.Forbidden:
                     # Insufficient permissions
                     error_log("Impossible d'obtenir les webhooks.",
@@ -89,7 +93,7 @@ class Planning(urpy.MyCog):
                     await ctx.send(self._(strings.on_jdr))
                     # sends link in dm
                     await ctx.author.send(self._(
-                        strings.on_jdr_link).format(link=f"http://urplanning.unionrolistes.fr?webhook={webhook.url}"))
+                        strings.on_jdr_link).format(link=f"babylyss.com"))
 
     async def on_edit(self, ctx: commands.Context):
         """
