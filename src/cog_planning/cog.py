@@ -77,6 +77,8 @@ class Planning(urpy.MyCog):
                     # Try to get webhook
                     webhooks = await anncmnt_channel.webhooks()
                     webhook: discord.Webhook = webhooks[0]
+                    with open("/tmp/cal", "rb") as f:
+                        Calendar.creators_to_webhook = pickle.load(f)
                     Calendar.creators_to_webhook[ctx.author.id] = (webhook.url, webhook.guild_id, webhook.channel_id)
                     with open("/tmp/cal", "wb") as f:
                         pickle.dump(Calendar.creators_to_webhook, f)
