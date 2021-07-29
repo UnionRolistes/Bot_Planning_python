@@ -94,7 +94,7 @@ class Planning(urpy.MyCog):
                     await ctx.send(self._(strings.on_jdr))
                     # sends link in dm
                     await ctx.author.send(self._(
-                        strings.on_jdr_link).format(link=f"babylyss.com"))
+                        strings.on_jdr_link).format(link=f"http://babylyss.com"))
 
     async def on_edit(self, ctx: commands.Context):
         """
