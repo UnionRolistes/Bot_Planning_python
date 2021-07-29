@@ -26,7 +26,7 @@ from cog_planning import strings
 
 from cog_planning import settings
 import cog_planning.info
-from xml import Calendar
+from urpy.xml import Calendar
 
 
 class Planning(urpy.MyCog):
