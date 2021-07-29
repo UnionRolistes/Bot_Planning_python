@@ -78,7 +78,7 @@ class Planning(urpy.MyCog):
                     webhooks = await anncmnt_channel.webhooks()
                     webhook: discord.Webhook = webhooks[0]
                     Calendar.creators_to_webhook[ctx.author.id] = webhook
-                    with open('/tmp/cal', 'wp') as f:
+                    with open('/tmp/cal', 'wb') as f:
                         pickle.dump(Calendar.creators_to_webhook, f)
                 except discord.errors.Forbidden:
                     # Insufficient permissions
