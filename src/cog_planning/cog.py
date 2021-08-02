@@ -2,6 +2,7 @@
 Cog regroupant les fonctions de gestion du planning.\n
 Commandes :\n
     \t$jdr\n
+    \t$cal\n
     \t$edit\n
     \t$done\n
     \t$cancel\n
@@ -96,7 +97,27 @@ class Planning(urpy.MyCog):
                     await ctx.send(self._(strings.on_jdr))
                     # sends link in dm
                     await ctx.author.send(self._(
-                        strings.on_jdr_link).format(link=f"http://urplanning.unionrolistes.fr"))
+                        strings.on_jdr_link).format(link=f'http://urplanning.unionrolistes.fr/')) #TODO : Tester en utilisant settings.creation_form_url
+
+
+    @commands.command(brief=strings.cal_brief, help=strings.cal_help)
+    async def cal(self, ctx: commands.Context):
+        """
+        Envoie le lien pour voir le calendrier (modifiable dans settings.py)
+
+        """
+        ctx = urpy.MyContext(ctx, delete_after=settings.msg_delete_delay)
+
+        # checks location of $cal call
+        if isinstance(ctx.channel, discord.DMChannel):
+            # DM Channel
+            await ctx.send(self._(strings.on_cal_dm_channel))
+        elif isinstance(ctx.channel, discord.TextChannel):
+            # Text Channel
+            await ctx.send(self._(strings.on_cal))
+            # sends link in dm
+            await ctx.author.send(self._(
+                strings.on_cal_link).format(link=settings.calendar_url))
 
     async def on_edit(self, ctx: commands.Context):
         """
@@ -237,6 +258,7 @@ class Planning(urpy.MyCog):
             try:
                 if payload.emoji.name == "✅":
                     mp = strings.on_join
+                    #Inserer date et titre de la partie
                     await msg.remove_reaction("❌", payload.member)
                 elif payload.emoji.name == "❌":
                     check_reactions_users = await discord.utils.get(msg.reactions, emoji="✅").users().flatten()
@@ -269,6 +291,7 @@ class Planning(urpy.MyCog):
         channel: discord.TextChannel = await self.bot.fetch_channel(payload.channel_id)
         if isinstance(channel, discord.TextChannel) and channel.name == 'planning-jdr' and payload.emoji.name == "✅":
             msg = await channel.fetch_message(payload.message_id)
+            #Inserer date et titre de la partie 
             mp = strings.on_leave.format(user=f"<@{payload.user_id}>")
 
             await self.send_to_mj(msg, mp)
