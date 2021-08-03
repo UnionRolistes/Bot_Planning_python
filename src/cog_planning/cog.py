@@ -12,6 +12,7 @@ import sys
 import logging
 import re
 from importlib import resources
+from pathlib import Path
 
 import discord
 import discord.errors
@@ -78,10 +79,14 @@ class Planning(urpy.MyCog):
                     # Try to get webhook
                     webhooks = await anncmnt_channel.webhooks()
                     webhook: discord.Webhook = webhooks[0]
-                    with open("/usr/share/urbot/cal", "rb") as f:
-                        Calendar.creators_to_webhook = pickle.load(f)
+
+                    my_file = Path("/tmp/urbot/cal") #Si le fichier existe dejà, on peut l'ouvrir. Sinon, la commande avec wb le créera
+                    if my_file.is_file(): 
+                        with open("/tmp/urbot/cal", "rb") as f:
+                            Calendar.creators_to_webhook = pickle.load(f)
+
                     Calendar.creators_to_webhook[ctx.author.id] = (webhook.url, webhook.guild_id, webhook.channel_id)
-                    with open("/usr/share/urbot/cal", "wb") as f:
+                    with open("/tmp/urbot/cal", "wb") as f:
                         pickle.dump(Calendar.creators_to_webhook, f)
 
                 except discord.errors.Forbidden:
