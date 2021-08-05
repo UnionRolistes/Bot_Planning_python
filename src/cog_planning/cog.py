@@ -80,10 +80,8 @@ class Planning(urpy.MyCog):
                     webhooks = await anncmnt_channel.webhooks()
                     webhook: discord.Webhook = webhooks[0]
 
-                    my_file = Path("/tmp/urbot/cal") #Si le fichier existe dejà, on peut l'ouvrir. Sinon, la commande avec wb le créera
-                    if my_file.is_file(): 
-                        with open("/tmp/urbot/cal", "rb") as f:
-                            Calendar.creators_to_webhook = pickle.load(f)
+                    #with open("/tmp/urbot/cal", "rb") as f:
+                     #   Calendar.creators_to_webhook = pickle.load(f)
 
                     Calendar.creators_to_webhook[ctx.author.id] = (webhook.url, webhook.guild_id, webhook.channel_id)
                     with open("/tmp/urbot/cal", "wb") as f:
@@ -102,7 +100,7 @@ class Planning(urpy.MyCog):
                     await ctx.send(self._(strings.on_jdr))
                     # sends link in dm
                     await ctx.author.send(self._(
-                        strings.on_jdr_link).format(link=f'http://urplanning.unionrolistes.fr/')) #TODO : Tester en utilisant settings.creation_form_url
+                        strings.on_jdr_link).format(link=f'http://urplanning.unionrolistes.fr?webhook={webhook.url}')) #TODO : Tester en utilisant settings.creation_form_url
 
 
     @commands.command(brief=strings.cal_brief, help=strings.cal_help)
