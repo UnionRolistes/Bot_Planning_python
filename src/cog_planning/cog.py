@@ -81,7 +81,7 @@ class Planning(urpy.MyCog):
                     webhooks = await anncmnt_channel.webhooks()
                     webhook: discord.Webhook = webhooks[0]
 
-                    #with open("/tmp/urbot/cal", "rb") as f:
+                    #with open("/tmp/urbot/cal", "rb") as f: #Fait planter $jdr
                     #   Calendar.creators_to_webhook = pickle.load(f)
 
                     cal_dir = Path("/tmp/urbot")
@@ -109,7 +109,7 @@ class Planning(urpy.MyCog):
                     await ctx.send(self._(strings.on_jdr))
                     # sends link in dm
                     await ctx.author.send(self._(
-                        strings.on_jdr_link).format(link=f'http://urplanning.unionrolistes.fr?webhook={webhook.url}')) #TODO : Tester en utilisant settings.creation_form_url
+                        strings.on_jdr_link).format(link=f'{settings.creation_form_url}?webhook={webhook.url}')) #TODO : Tester en utilisant settings.creation_form_url
 
 
     @commands.command(brief=strings.cal_brief, help=strings.cal_help)
