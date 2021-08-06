@@ -13,6 +13,7 @@ import logging
 import re
 from importlib import resources
 from pathlib import Path
+import os
 
 import discord
 import discord.errors
@@ -81,7 +82,15 @@ class Planning(urpy.MyCog):
                     webhook: discord.Webhook = webhooks[0]
 
                     #with open("/tmp/urbot/cal", "rb") as f:
-                     #   Calendar.creators_to_webhook = pickle.load(f)
+                    #   Calendar.creators_to_webhook = pickle.load(f)
+
+                    cal_dir = Path("/tmp/urbot")
+                    cal_file = Path("/tmp/urbot/cal")
+
+                    if not cal_dir.is_dir():
+                        os.mkdir('/tmp/urbot') # crée le dossier si il n'existe pas
+                    if not cal_file.is_file():
+                        x = open("/tmp/urbot/cal", "w") #Crée le fichier si il n'existe pas. Ne fait rien sinon
 
                     Calendar.creators_to_webhook[ctx.author.id] = (webhook.url, webhook.guild_id, webhook.channel_id)
                     with open("/tmp/urbot/cal", "wb") as f:

@@ -1,5 +1,8 @@
+- Changelog for v1.0.3 (2021-08-06)
+    * Auto create /tmp/usr/cal for $jdr
+
 - Changelog for v1.0.2 (2021-08-05)
-    * Attempt to fix $jdr
+    * Fix $jdr
 
 - Changelog for v1.0.1 (2021-08-03)
     * Attempt to fix $jdr
