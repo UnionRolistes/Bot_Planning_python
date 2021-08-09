@@ -90,8 +90,9 @@ class Planning(urpy.MyCog):
                     if not cal_file.is_file():
                         x = open(f'{settings.tmp_wh_location}/wh', "w") #Crée le fichier si il n'existe pas. Ne fait rien sinon
 
+                    #if (os.stat(cal_file).st_size) != 0:
                     with open(f'{settings.tmp_wh_location}/wh', "rb") as f:
-                       Calendar.creators_to_webhook = pickle.load(f)
+                        Calendar.creators_to_webhook = pickle.load(f)
 
                     Calendar.creators_to_webhook[ctx.author.id] = (webhook.url, webhook.guild_id, webhook.channel_id)
                     print('Debug: Sauvegarde du webhook...')
