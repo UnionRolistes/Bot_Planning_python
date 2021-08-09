@@ -81,20 +81,23 @@ class Planning(urpy.MyCog):
                     webhooks = await anncmnt_channel.webhooks()
                     webhook: discord.Webhook = webhooks[0]
 
-                    #with open("/tmp/urbot/cal", "rb") as f: #Fait planter $jdr
-                    #   Calendar.creators_to_webhook = pickle.load(f)
 
-                    cal_dir = Path("/tmp/urbot")
-                    cal_file = Path("/tmp/urbot/cal")
+                    cal_dir = Path(f'{settings.tmp_wh_location}')
+                    cal_file = Path(f'{settings.tmp_wh_location}/wh')
 
                     if not cal_dir.is_dir():
-                        os.mkdir('/tmp/urbot') # crée le dossier si il n'existe pas
+                        os.mkdir(f'{settings.tmp_wh_location}') # crée le dossier si il n'existe pas
                     if not cal_file.is_file():
-                        x = open("/tmp/urbot/cal", "w") #Crée le fichier si il n'existe pas. Ne fait rien sinon
+                        x = open(f'{settings.tmp_wh_location}/wh', "w") #Crée le fichier si il n'existe pas. Ne fait rien sinon
+
+                    with open(f'{settings.tmp_wh_location}/wh', "rb") as f:
+                       Calendar.creators_to_webhook = pickle.load(f)
 
                     Calendar.creators_to_webhook[ctx.author.id] = (webhook.url, webhook.guild_id, webhook.channel_id)
-                    with open("/tmp/urbot/cal", "wb") as f:
+                    print('Debug: Sauvegarde du webhook...')
+                    with open(f'{settings.tmp_wh_location}/wh', "wb") as f:
                         pickle.dump(Calendar.creators_to_webhook, f)
+                        print('Debug: Webhook sauvegardé !')
 
                 except discord.errors.Forbidden:
                     # Insufficient permissions
@@ -109,7 +112,7 @@ class Planning(urpy.MyCog):
                     await ctx.send(self._(strings.on_jdr))
                     # sends link in dm
                     await ctx.author.send(self._(
-                        strings.on_jdr_link).format(link=f'{settings.creation_form_url}?webhook={webhook.url}')) #TODO : Tester en utilisant settings.creation_form_url
+                        strings.on_jdr_link).format(link=f'{settings.creation_form_url}'))
 
 
     @commands.command(brief=strings.cal_brief, help=strings.cal_help)
