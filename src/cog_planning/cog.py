@@ -113,7 +113,7 @@ class Planning(urpy.MyCog):
                     await ctx.send(self._(strings.on_jdr))
                     # sends link in dm
                     await ctx.author.send(self._(
-                        strings.on_jdr_link).format(link=f'{settings.creation_form_url}?webhook={webhook}'))
+                        strings.on_jdr_link).format(link=f'{settings.creation_form_url}?webhook={webhook.url}'))
 
 
     @commands.command(brief=strings.cal_brief, help=strings.cal_help)
