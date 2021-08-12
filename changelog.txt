@@ -1,3 +1,7 @@
+- Changelog for v1.1.7 (2021-08-12)
+    * Update README with install steps
+    * Added license text in main code files
+
 - Changelog for v1.1.6 (2021-08-11)
     * Writing webhook in  a file instead of URL (again)
 

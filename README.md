@@ -12,6 +12,11 @@ Il est tout à fait possible qu'un autre groupe, association, club utilise ce bo
 
 **how to install**
 
+Pour une 1ère installation : 
+"cd /usr/local/src && sudo git clone https://github.com/UnionRolistes/Bot_Base && cd Bot_Base && sudo bash updateBot.sh"
+
+Pour une mise à jour :
+"cd /usr/local/src/Bot_Base && sudo git checkout . && sudo git pull && sudo bash updateBot.sh"
 
 
 **how to use (in discord)**
@@ -21,9 +26,6 @@ la commande s'effacera, puis vous receverez un message privé avec les instructi
 
 **Futur Update**
 
-    Reaction automatique par le bot
-
-    Mp au MJ lors d'une inscription.
 
     Pouvoir éditer un message
 
@@ -32,12 +34,6 @@ la commande s'effacera, puis vous receverez un message privé avec les instructi
     Rapport de plantage serveur/service.
 
     Partage directe vers twitter et facebook avec proposition de #tag
-
-    Affichage horizontal en ligne pour inscription en convention, classement par jours / semaines
-
-    $ping "pong ! (BotPlanning)"
-
-    $credit "Ceux qui m'ont créer !"
 
     $don "soutenez le JdR, Soutenez L'UR !"
 
@@ -48,13 +44,7 @@ la commande s'effacera, puis vous receverez un message privé avec les instructi
 
 
 **credit / contributeur**
-Dae#5125
-Tonitch#2192
-scribble#8876 
+Voir src/cog_planning/info/credits.txt
 
 **donation link**
-
-
-> Discord Bot Create by tonitch (d.tontich@gmail.com) for "UnionRolistes.fr"
-
-
+http://site.unionrolistes.fr/
