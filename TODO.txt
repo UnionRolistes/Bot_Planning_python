@@ -5,7 +5,8 @@ utiliser plutôt Reaction.message pour obtenir le message
 https://discord.com/api/webhooks/857045646220984350/62viiYTAQEislCPUzijqUSBL41en2XXdWskpYpi_ZhgQamwBtzfwUBFo8A1iG4iytyAX
 webhook through get for development purpose
 
-Déplacer $site quelque part dans Bot_Base
+-Déplacer $site quelque part dans Bot_Base
+- Ajouter le titre et la date de la partie quand un MP est envoyé au MJ (Faisable dans cog.py)
 
 """
 Le bot discord de l'Union des Rôlistes a pour but d'automatiser l'organisation

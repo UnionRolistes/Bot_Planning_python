@@ -299,8 +299,8 @@ class Planning(urpy.MyCog):
 
             try:
                 if payload.emoji.name == "✅":
-                    mp = strings.on_join
-                    #Inserer date et titre de la partie
+                    titre = await self.get_infos(msg)
+                    mp = f"{strings.on_join} \n{titre}"
                     await msg.remove_reaction("❌", payload.member)
                 elif payload.emoji.name == "❌":
                     check_reactions_users = await discord.utils.get(msg.reactions, emoji="✅").users().flatten()
@@ -312,8 +312,17 @@ class Planning(urpy.MyCog):
                       "Le bot nécessite la permission de gérer les messages.", file=sys.stderr)
             else:
                 if mp:
-                    mjs_found = re.search("<@[0-9]*>", msg.embeds[0].description)
-                    await self.send_to_mj(msg, mp.format(user=f"<@{payload.user_id}> — {payload.member}"))
+                    #mjs_found = re.search("<@[0-9]*>", msg.embeds[0].description) #Pas utilisé
+                    mp=mp.format(user=f"<@{payload.user_id}> — {payload.member}")
+                    await self.send_to_mj(msg, mp)
+
+    async def get_infos(self, msg): #On peut ici choisir quelles infos envoyer en MP, en choisissant les lignes voulues de la description. Par exemple, la date et le titre (ligne 2 et 3 de la description)
+        description=str(msg.embeds[0].description)
+        title=f"----- {description.splitlines()[1]} {description.splitlines()[2]} -----"
+        if not title:
+            print(f"ERROR:BOT | Le message {msg.id} ne mentionne pas de titre.", file=sys.stderr)
+        else:
+            return title
 
     async def get_mj(self, msg) -> discord.User:
         mjs_found = re.search("<@[0-9]*>", msg.embeds[0].description)
@@ -333,9 +342,10 @@ class Planning(urpy.MyCog):
         channel: discord.TextChannel = await self.bot.fetch_channel(payload.channel_id)
         if isinstance(channel, discord.TextChannel) and channel.name == 'planning-jdr' and payload.emoji.name == "✅":
             msg = await channel.fetch_message(payload.message_id)
-            #Inserer date et titre de la partie 
             mp = strings.on_leave.format(user=f"<@{payload.user_id}>")
-
+            
+            infos = await self.get_infos(msg)
+            mp = mp+f"\n{infos}"          
             await self.send_to_mj(msg, mp)
 
 
