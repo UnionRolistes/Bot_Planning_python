@@ -3,6 +3,7 @@ Cog regroupant les fonctions de gestion du planning.\n
 Commandes :\n
     \t$jdr\n
     \t$cal\n
+    \t$site\n
     \t$edit\n
     \t$done\n
     \t$cancel\n
@@ -140,6 +141,25 @@ class Planning(urpy.MyCog):
             # sends link in dm
             await ctx.author.send(self._(
                 strings.on_cal_link).format(link=settings.calendar_url))
+
+    @commands.command(brief=strings.cal_brief, help=strings.cal_help)
+    async def site(self, ctx: commands.Context):
+        """
+        Envoie le lien pour voir le site de dons (modifiable dans settings.py)
+
+        """
+        ctx = urpy.MyContext(ctx, delete_after=settings.msg_delete_delay)
+
+        # checks location of $cal call
+        if isinstance(ctx.channel, discord.DMChannel):
+            # DM Channel
+            await ctx.send(self._(strings.on_site_dm_channel))
+        elif isinstance(ctx.channel, discord.TextChannel):
+            # Text Channel
+            await ctx.send(self._(strings.on_site))
+            # sends link in dm
+            await ctx.author.send(self._(
+                strings.on_site_link).format(link=settings.site_url))
 
     async def on_edit(self, ctx: commands.Context):
         """

@@ -28,4 +28,10 @@ on_cal = lcl("The link has been sent into your DMs to see the calendar !")
 on_cal_link = on_jdr_link # Si on veut personnaliser : = lcl("Here is the link :\n{link}")
 on_cal_dm_channel = on_jdr_dm_channel # Si on veut personnaliser : = lcl("This command is only usable in a server!")
 
+site_brief = lcl("Sends a link to the donation site")
+site_help = site_brief
+on_site = lcl("The link has been sent into your DMs to see the website !")
+on_site_link = on_jdr_link # Si on veut personnaliser : = lcl("Here is the link :\n{link}")
+on_site_dm_channel = on_jdr_dm_channel # Si on veut personnaliser : = lcl("This command is only usable in a server!")
+
 on_permission_error = lcl("Error, the bot doesn't have the required permissions. Contact the admin.")

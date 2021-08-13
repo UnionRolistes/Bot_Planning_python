@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-08-02 17:03+0200\n"
-"PO-Revision-Date: 2021-08-02 17:08+0200\n"
+"POT-Creation-Date: 2021-08-13 11:39+0200\n"
+"PO-Revision-Date: 2021-08-13 11:40+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -88,9 +88,11 @@ msgstr ""
 #: strings.py:20
 #, python-brace-format
 msgid ""
-"Here is the link :\n"
+"Here is the link : \n"
+" {link}"
+msgstr ""
+"Voici le lien : \n"
 "{link}"
-msgstr "Voici le lien :\\n{link}"
 
 #: strings.py:21
 msgid "This command is only usable in a server!"
@@ -117,6 +119,16 @@ msgstr ""
 "rôliste !"
 
 #: strings.py:31
+msgid "Sends a link to the donation site"
+msgstr "Envoie un lien pour accéder au site de dons"
+
+#: strings.py:33
+msgid "The link has been sent into your DMs to see the website !"
+msgstr ""
+"Un lien a été envoyé dans vos messages privés pour accéder au site de "
+"l'Union des Rôlistes !"
+
+#: strings.py:37
 msgid ""
 "Error, the bot doesn't have the required permissions. Contact the admin."
 msgstr ""
