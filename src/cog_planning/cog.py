@@ -119,8 +119,8 @@ class Planning(urpy.MyCog):
                     await ctx.send(self._(strings.on_jdr))
                     # sends link in dm
                     await ctx.author.send(self._(
-                        #strings.on_jdr_link).format(link=f'{settings.creation_form_url}')) 
-                        strings.on_jdr_link).format(link=f'{settings.creation_form_url}?webhook={webhook.url}')) 
+                        strings.on_jdr_link).format(link=f'{settings.creation_form_url}')) 
+                        #strings.on_jdr_link).format(link=f'{settings.creation_form_url}?webhook={webhook.url}')) 
                         #format(link=f'{settings.creation_form_url}?webhook={webhook.url}')) pour passer le webhook dans l'URL. Puis changer la fonction get_webhook_url dans Web_Planning/cgi/create_post.py
 
 
