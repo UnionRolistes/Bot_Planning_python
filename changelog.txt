@@ -1,3 +1,7 @@
+- Changelog for v1.4.0 (2022-04-06)
+    * removing webhook URL from command
+
+
 - Changelog for v1.3.0 (2021-08-13)
     * Added jdr infos on MP
 
