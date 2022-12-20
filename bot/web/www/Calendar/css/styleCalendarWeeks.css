@@ -1,0 +1,59 @@
+@import url("styleCalendar.css"); /* --> CSS pour les éléments communs aux 2 pages */
+
+
+/*Pour la grille :*/
+   
+.calendar{ 
+  grid-template-columns: 50px auto; /*max-content*/
+  grid-template-rows: auto;
+  position: relative;
+
+  grid-auto-flow: column;
+ /* grid-auto-flow: column;*/
+  /*grid-auto-columns: minmax(1fr, auto);*/
+  /*minmax(160px,1fr);*/
+ /* overflow-x: scroll;*/
+}
+
+.weekDays,
+.dayNumbers-container{
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-auto-flow: column;
+}
+
+
+/*Pour les events*/
+
+.event-container{
+  display: grid;
+  grid-template-columns: repeat(14, 1fr);
+  grid-template-rows: repeat(48, 1fr); /*24 heures x 2 divisions : On veut une précision à la demie heure près. Si on voulait 1/4 quart d'heure, on fait 24 x 4*/
+  grid-area: main; /*Associe à l'area main*/
+  position: relative;
+
+  /*grid-auto-flow: column;*/
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(100px, auto);
+}
+
+.slotWeek{
+  text-decoration: none;
+  color:white;
+}
+
+
+
+/*Pour le responsive et affichage mobile :*/
+@-ms-viewport {
+  width: device-width;
+}
+
+
+@media screen and (max-width:770px){
+  /* Pour les ecrans de moins de 770 pixels de large */
+
+  .slot{
+    font-size:10px;
+  }
+}

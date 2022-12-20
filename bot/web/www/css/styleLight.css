@@ -1,0 +1,51 @@
+/*UR_Bot © 2020 by "Association Union des Rôlistes & co" is licensed under Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA)
+To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/4.0/
+Ask a derogation at Contact.unionrolistes@gmail.com*/
+
+body{
+  background-color: white;
+  color: black;
+}
+
+
+/*inputs et boutons : */
+
+input, button {
+    border: 1px solid black !important;
+    transition: 0.2s ease-in-out;
+    transition-property: color, background-color, border;
+    border-radius: 5px;
+}
+input[type="text"] {
+    width: 100%;
+    border: 3px solid white;
+    background-color: #fff;   
+    color: #666;
+    -webkit-appearance: none;
+    text-align: center;
+}
+input[type="number"]{ /*Pour l'age. On veut une disposition permettant de caser la checkbox à côté */
+    background-color: #fff;
+    color: #666;
+}
+
+button {
+    width: 100%;
+    height: 40%;
+    color: #666 !important;
+    border-radius: 5px !important;
+    background-color: transparent;
+}
+
+option {
+  color:black !important;
+}
+
+select{
+    width: 102%;
+    border: 1px solid black;
+    background-color: #fff;
+    border-radius: 5px;
+    color: #666;
+    text-align: center;
+}

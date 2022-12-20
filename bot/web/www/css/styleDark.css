@@ -1,0 +1,59 @@
+/*UR_Bot © 2020 by "Association Union des Rôlistes & co" is licensed under Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA)
+To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/4.0/
+Ask a derogation at Contact.unionrolistes@gmail.com*/
+
+body {
+  /* background-color: #23272a; */
+  background-color: hsl(22, 96%, 50%);
+  color: white;
+}
+#URform {
+  background: #2c2f33;
+}
+
+/*inputs et boutons : */
+
+input,
+button,
+select,
+textarea {
+  border: 1px solid gray !important;
+  transition: 0.2s ease-in-out;
+  transition-property: color, background-color, border;
+}
+
+input[type='text'] {
+  width: 100%;
+  border: 3px solid white;
+  -webkit-appearance: none;
+  text-align: center;
+}
+
+button,
+option {
+  color: white;
+}
+
+select {
+  width: 100%;
+  border: 1px solid gray;
+}
+
+textarea,
+input[type='text'],
+input[type='number'],
+select {
+  background-color: #23272a;
+  color: white;
+}
+
+textarea,
+input[type='text'],
+input[type='number'],
+select {
+  background-color: #23272a;
+  color: white;
+}
+#submit {
+  background-color: gray;
+}

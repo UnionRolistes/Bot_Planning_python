@@ -1,0 +1,187 @@
+/*UR_Bot © 2020 by "Association Union des Rôlistes & co" is licensed under Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA)
+To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/4.0/
+Ask a derogation at Contact.unionrolistes@gmail.com*/
+
+/*Contient le CSS commun aux versions Dark et Light. Cad la disposition du formulaire.
+Pour les couleurs de chaque thème, voir styleDark et styleLight*/
+
+/*Fonctionnement HTML : Créer un <form> d'id "URform". 
+Tous les contenu des <label> vont s'afficher automatiquement à gauche, et les input, select, textarea, button, et élements de class "right" vont être à droite*/
+
+@import url("switchButton.css"); /*CSS du bouton de changement de mode de couleur*/
+
+
+/*Police et taille d'écriture : */
+html {
+    /* 1 */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font-size: 16px;
+    font-weight: normal;
+    line-height: 1.5;
+    /* 2 */
+    -webkit-text-size-adjust: 100%;
+    /* 3 */
+    background: #fff;
+    color: #666;
+}
+
+
+
+body{
+  margin: 0;
+  padding: 20px;
+  overflow: auto;
+}
+.titleCenter{
+  text-align: center;
+}
+
+
+/* Designing for scroll-bar */
+::-webkit-scrollbar {
+  width: 7px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: gainsboro;
+  border-radius: 5px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: black;
+  border-radius: 5px;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+
+
+/*Grid layout : */
+#URform {
+    display: grid;
+    grid-template-columns: [labels] auto [controls] 1fr;
+    grid-auto-flow: row;
+    grid-gap: 1.6em 4%; /*Distance verticale puis horizontale entre les éléments*/
+    padding: 1.2em;
+    width: 50%; /*Taille horizontale du formulaire*/
+
+    border : 1px solid #000;
+    margin-left: 23%; /*Distance du formulaire par rapport au bords de la fenêtre*/
+    box-shadow: 5px 8px 6px black;
+}
+
+/*Liste des éléments qui doivent s'afficher à gauche :*/
+#URform > label,
+#URform > fieldset{
+    grid-column: labels;
+    grid-row: auto;
+}
+
+/*Liste des éléments qui doivent s'afficher à droite :*/
+.right,
+#URform > input,
+#URform > select,
+#URform > textarea,
+#URform > button {  
+    grid-column: controls;
+    grid-row: auto;
+    padding: .4em;
+}
+#URform > fieldset {
+    grid-column: span 2;
+}  
+#URform > textarea {
+    min-height: 3em;
+}
+
+
+input[type="radio"] {
+  margin: 0 0px 0 10px;
+}
+
+
+/*Other, personnalisable :*/
+
+button{
+    width: 100%;
+    height: 40%;
+    border-radius: 5px !important;
+    background-color: transparent;
+  
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    -webkit-text-size-adjust: 100%;
+    font-weight: normal;
+    line-height: 1.5;
+}
+
+.beta{
+    text-align:center;
+    margin-top:5vh;
+    font-size:14px;
+    color:rgb(218, 31, 31);
+    font-family:mono;
+}
+
+#connexion, #deconnexion{
+    border-radius:5px;
+    background-color:rgb(207, 204, 204);
+    height: 27px;
+}
+#deconnexion{margin-left: 4%;}
+
+.annotation{ /* annotations du nombre de joueurs et du saut de ligne dans une description*/
+  color: gray;
+  font-size: 75%;
+}
+.rouge{color:red;}
+.vert{color: rgb(25, 219, 25);}
+
+textarea{width:100%;}
+
+button:disabled,
+button[disabled]{
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  color: white;
+}
+
+a{
+  text-decoration: none;
+  color: rgb(40, 40, 199);
+}
+
+#connectField{text-align: center;}
+
+/*Pour le responsive et affichage mobile :*/
+@-ms-viewport {
+  width: device-width ;
+}
+
+
+@media screen and (max-width:1050px){
+  /* Pour les ecrans de moins de 1050 pixels de large */
+
+  #URform { /*On supprime les espaces vides autour du formulaire */
+    width: 95%; 
+    font-size: 13px;
+
+    border : 1px solid #000;
+    box-shadow: 5px 8px 6px black;
+    margin:0;
+    margin-left:-2%;
+  }
+}
+
+
+@media screen and (max-width:450px){
+
+  #URform {
+    grid-gap: 1em 1%; /*Distance verticale puis horizontale entre les éléments*/
+    padding: 1em;
+  }
+  #submit{
+    height: 50%;    
+  }
+}
