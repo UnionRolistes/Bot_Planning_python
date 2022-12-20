@@ -1,9 +1,0 @@
-Conserver la mise en forme dans l'affichage de la description
-
-Bugs :
-Gerer les cas ou plusieurs parties sont au meme moment dans l'affichage par semaine
-- Calendar : Exportation d'une partie : gerer le cas ou la partie fait 30 minutes (Actuellement ne fonctionne que si il y a "h" dans la durée)
-- Calendar : faire des vérifications et redirections un peu partout (si on veut accéder à une page par l'URL sans en avoir le droit, etre rejeté)
- 
-Ajouts potentiels :
-Colonne du jour qui s'étend horizontalement quand plusieurs parties sont prévues au meme moment
