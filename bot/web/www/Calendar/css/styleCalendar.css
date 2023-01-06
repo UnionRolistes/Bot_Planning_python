@@ -3,8 +3,8 @@
 To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/4.0/
 Ask a derogation at Contact.unionrolistes@gmail.com*/
 
-body{
-  background-color: #23272A;
+body {
+  background-color: #23272a;
   margin: 0;
   padding: 0;
   color: white;
@@ -15,27 +15,27 @@ body{
   align-items: center;
 }
 
-.titleCenter{
+.titleCenter {
   text-align: center;
 }
 
-
 /*Calendrier scrollable tout en gardant les jours à l'écran :*/
 
-header, .header, .titleCenter{
+header,
+.header,
+.titleCenter {
   z-index: 6;
   position: sticky;
   overflow: auto;
   top: 0;
-  background-color: #23272A;
+  background-color: #23272a;
 }
-.header{
+.header {
   top: 105px;
 }
-.titleCenter{
+.titleCenter {
   top: 78px;
 }
-
 
 /* Designing for scroll-bar */
 ::-webkit-scrollbar {
@@ -56,83 +56,79 @@ header, .header, .titleCenter{
   background: #555;
 }
 
-
-
 /*Pour les boutons :*/
 
-.switch-container{
-  margin-left: auto; 
+.switch-container {
+  margin-left: auto;
   margin-right: 0;
 }
-.btn-container{
+.btn-container {
   margin: 0 auto;
-  width: 15%; 
+  width: 15%;
 }
-
-
-
 
 /*Pour la grille :*/
 
-li{
+li {
   list-style: none;
 }
 
-ul{
+ul {
   margin: 0;
   padding: 0;
 }
-   
-.calendar{ 
+
+.calendar {
   display: grid;
   grid-template-columns: 50px auto;
   grid-template-rows: auto;
   gap: 1px 1px;
-  grid-template-areas: 
-  ".header"
-  "timeslots-container main"; /*Definit les areas*/
+  grid-template-areas:
+    '.header'
+    'timeslots-container main'; /*Definit les areas*/
 }
 
 .weekDays,
-.dayNumbers-container{
+.dayNumbers-container {
   display: grid;
-  grid-template-columns: repeat(7, 1fr); /*1fr 1fr 1fr 1fr 2fr 2fr 3fr ;*/ /*14% 14% 14% 14% 30% 14% 14%;*/
+  grid-template-columns: repeat(
+    7,
+    1fr
+  ); /*1fr 1fr 1fr 1fr 2fr 2fr 3fr ;*/ /*14% 14% 14% 14% 30% 14% 14%;*/
 }
 
-.weekDays{
-  background: #7289DA;
+.weekDays {
+  background: #7289da;
 }
 
-.header{
-  background: #23272A;
+.header {
+  background: #23272a;
   grid-area: header;
 }
 
-.timeslots-container{
+.timeslots-container {
   background: lightgray;
   grid-area: timeslots-container;
   justify-content: left;
 }
 
-.timeslots{
+.timeslots {
   display: flex;
   flex-direction: column;
   align-items: left;
 }
 
-.timeslots li{
+.timeslots li {
   min-height: 60px;
 }
 
-.dayNumbers-container li{
+.dayNumbers-container li {
   min-height: 2 em;
 }
 
-
-
 /* Pour faire les lignes de grille :*/
-.timeslots li::after{
-  content: "";
+.timeslots li::after {
+  content: '';
   position: absolute;
   left: 10px;
   width: 100%;
@@ -140,19 +136,21 @@ ul{
   background: 1px gray;
 }
 
-
 /*Pour les events*/
 
-.event-container{
+.event-container {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: repeat(48, 1fr); /*24 heures x 2 divisions : On veut une précision à la demie heure près. Si on voulait 1/4 quart d'heure, on fait 24 x 4*/
+  grid-template-rows: repeat(
+    48,
+    1fr
+  ); /*24 heures x 2 divisions : On veut une précision à la demie heure près. Si on voulait 1/4 quart d'heure, on fait 24 x 4*/
   grid-area: main; /*Associe à l'area main*/
   position: relative;
 }
 
-.slot{ 
-  position:absolute; /*relative donne un rendu bizarre*/
+.slot {
+  position: absolute; /*relative donne un rendu bizarre*/
   background: green;
   border-radius: 5px;
   z-index: 5; /*Pour afficher au 1er plan, au dessus des lignes*/
@@ -164,29 +162,27 @@ ul{
   max-width: 12vw;
   border: 1px solid black;
 }
-.slot a{
+.slot a {
   color: white;
   text-decoration: underline;
 }
-
 
 /*Pour le responsive et affichage mobile :*/
 @-ms-viewport {
   width: device-width;
 }
 
-
-@media screen and (max-width:770px){
+@media screen and (max-width: 770px) {
   /* Pour les ecrans de moins de 770 pixels de large */
 
-  .slot{
-    font-size:10px;
+  .slot {
+    font-size: 10px;
   }
 
-  .header{
+  .header {
     top: 155px;
   }
-  .titleCenter{
+  .titleCenter {
     top: 78px;
   }
 }
