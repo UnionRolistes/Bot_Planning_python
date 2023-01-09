@@ -9,7 +9,6 @@ load_dotenv()
 VERSION = os.getenv('BOT_PLANING_VERSION')
 CALENDRIER_URL = os.getenv('URL_SITE_CALENDRIER')
 JDR_URL = os.getenv('URL_SITE_JDR')
-SITE_URL = os.getenv('URL_SITE_SITE')
 print(f'VERSION_PLANING : {VERSION}')
 
 
@@ -28,11 +27,6 @@ class Planing(commands.Cog, name='Planing'):
     @commands.command(name="jdr", help="Envoie un lien pour créer une partie")
     async def _jdr(Self, event):
         await event.author.send(f'veuiller suivre le lient suivant : {JDR_URL}')
-
-    @commands.command(name="site", help="Envoie un lien pour accéder au site")
-    async def _site(Self, event):
-        await event.author.send(f'veuiller suivre le lient suivant : {SITE_URL}')
-
 
 async def setup(bot):
     await bot.add_cog(Planing(bot))

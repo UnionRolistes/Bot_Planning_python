@@ -1,15 +1,27 @@
 name: Union-des-rolistes
 
 services:
-  #bot_base:
-  #  volumes:
-  #  - ../../Bot_Presentation/bot/extends/prez:/app/extends/prez:ro
+  bot:
+    environment:
+      - URL_SITE_CALENDRIER=http://planning.unionrolistes.fr/Calendar
+      - URL_SITE_SITE= http://site.unionrolistes.fr/
+      - URL_SITE_JDR=http://planning.unionrolistes.fr/
+      - BOT_PLANING_VERSION=x.x.x
+    volumes:
+      - ../Bot_Planning_python/bot/bot/extends/:/app/extends/planing/:ro
+  api:
+    environment:
+      - JDR_CHANNEL=457225906075729921
+      #- LOGO_URL=
+      - URL_SITE_PLANNING=http://planning.unionrolistes.fr
+    volumes:
+      - ../Bot_Planning_python/bot/api/extends/:/app/extends/api/:ro
   php:
     volumes:
-      - ../../Bot_Planning_python/bot/web/www/:/var/www/html/Web_Planning/:rw
-      - ../../Bot_Planning_python/bot/web/vhost/100-UR_Planning.conf:/etc/apache2/sites-enabled/100-UR_Planning.conf:ro
+      - ../Bot_Planning_python/bot/web/www/:/var/www/html/Web_Planning/:rw
+      - ../Bot_Planning_python/bot/web/vhost/100-UR_Planning.conf:/etc/apache2/sites-enabled/100-UR_Planning.conf:ro
     environment:
       - CLIENT_ID=1052883609750605895 # for oauth2 discord
-      - CLIENT_SECRET=Mz_DBse4F0ri10TPJvPKhekOuwJo17nq # for oauth2 discord
+      - CLIENT_SECRET=g_CV54TN7_yx25B4hxqO_Br4WsraUxXl # for oauth2 discord
       - REDIRECT_URI=/php/get_token.php # for oauth2 discord
       - URL_SITE_PLANNING=http://planning.unionrolistes.fr # for oauth2 discord
