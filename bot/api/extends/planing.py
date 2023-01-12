@@ -132,9 +132,9 @@ class jdrPlatform(str, Enum):
 # Partie jouée sur Roll20
 # Partie jouée sur Discord
 # Partie jouée sur Autre
-    Twitch = "+<:custom_emoji_name:434370263518412820>+"
-    Roll20 = "+<:custom_emoji_name:493783713243725844>+"
-    Discord = "+<:custom_emoji_name:434370093627998208>+"
+    Twitch = " <:custom_emoji_name:434370263518412820> "
+    Roll20 = " <:custom_emoji_name:493783713243725844> "
+    Discord = " <:custom_emoji_name:434370093627998208> "
     Autre = ":space_invader:"
 
 class jdrInput(BaseModel):
@@ -145,8 +145,9 @@ class jdrInput(BaseModel):
     jdr_horaire: str = Field(..., title="GMT du JDR")
     jdr_title: str = Field(..., title="Titre du JDR")
     jdr_length: str = Field(..., title="Durée du JDR")
-    jdr_system: jdrLore | str = Field(..., title="Système du JDR", alias="jdr_system_other")
-    platform: jdrPlatform | list[jdrPlatform] | None = Field(title="Plateforme du JDR")
+    jdr_system: jdrLore | None = Field( title="Système du JDR")
+    jdr_system_other: str | None = Field(title="Système du JDR (autre)")
+    platform: list[jdrPlatform] | None = Field(title="Plateforme du JDR")
     jdr_pj: str = Field(..., title="PJ du JDR")
     jdr_details: str | None = Field(title="Détails du JDR")
     class Config:
@@ -174,19 +175,28 @@ async def createJdr(input: jdrInput, user: dict = Depends(check_token_dep),
         players = f"{maxP} (min {minP})"
 
     info, reactions = model.split("[") # split the model into the info and the reactions (c'est de la merde mais bon)
+    #if platform not exist
+    # if input.platform is None:
+    #     platform = []
+    # else:
+    #     platform = input.platform
+    # print("raaaaaaa")
+    # print(platform)
+    # print("raaaaa")
+
 
     msg = info.format(
-        type=input.jdr_type,
+        type=input.jdr_type.value,
         title=input.jdr_title,
         date=input.jdr_date,
         horaire=input.jdr_horaire,
         players=players,
         length=input.jdr_length,
         pseudoMJ=f"<@{user['id']}> [{user['username']}]",  # TODO handle server nicknames
-        system=input.jdr_system if input.jdr_system else input.jdr_system_other,
+        system=input.jdr_system.value if input.jdr_system else input.jdr_system_other,
         # 0=oui, 1=non préférable, 2=non
         minors_allowed="oui" if input.jdr_pj == 0 else "non préférable" if input.jdr_pj == 1 else "non",
-        platforms=", ".join([p.value for p in input.platform]) if input.platform else " ",
+        platforms=", ".join([p for p in input.platform]) if input.platform else " ",
         details=input.jdr_details
     )
     print("msg: ", msg)
@@ -200,6 +210,7 @@ async def createJdr(input: jdrInput, user: dict = Depends(check_token_dep),
     res = await channel.send("", embed=discord.Embed(description=msg, type="rich").set_thumbnail(url=LOGO_URL))
     #if send worked, redirect to planning
     if res:
-        return RedirectResponse(url= URL_SITE_PLANNING+"?error=isPosted")
+        # return RedirectResponse(url= URL_SITE_PLANNING+"?error=isPosted")
+        return "ok"
     else:
         return RedirectResponse(url= URL_SITE_PLANNING+"?error=envoi")

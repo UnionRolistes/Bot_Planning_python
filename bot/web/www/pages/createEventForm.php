@@ -58,7 +58,13 @@ Ask a derogation at Contact.unionrolistes@gmail.com-->
                 <option> Campagne </option>
             </select>
 
+            <label>Fuseau horaire 🌎 <span class="rouge">*</span></label>
 
+            <select name="jdr_horaire" id="horaire" required>
+                <option value="" disabled hidden selected></option> <!--Cette "option" force l'utilisateur à sélectionner une option-->
+                <option> GMT +1 FRANCE </option>
+                <option> GMT -6 QUEBEC</option>
+            </select>
 
             <label>Date 📅 et heure ⌚ <span class="rouge">*</span></label>
 
@@ -77,13 +83,7 @@ Ask a derogation at Contact.unionrolistes@gmail.com-->
             </script> <!--L'attribut required force un champ à être rempli pour envoyer le formulaire-->
 
 
-            <label>Fuseau horaire 🌎 <span class="rouge">*</span></label>
 
-            <select name="jdr_horaire" id="horaire" required>
-                <option value="" disabled hidden selected></option> <!--Cette "option" force l'utilisateur à sélectionner une option-->
-                <option> GMT +1 </option>
-                <option> GMT -6 </option>
-            </select>
 
 
             <!-- Nom campagne -->
@@ -169,6 +169,20 @@ Ask a derogation at Contact.unionrolistes@gmail.com-->
 
                 // Récupère les données du formulaire
                 var formData = new FormData(document.getElementById("URform"))
+                let data = {...Object.fromEntries(formData)}
+                // let data = {...Object.fromEntries(formData), platform: platforms}
+                // get all the values checked of platfrom in a array
+                let platforms = []
+                for (let i = 0; i < document.getElementsByName("platform").length; i++) {
+                    if (document.getElementsByName("platform")[i].checked) {
+                        platforms.push(document.getElementsByName("platform")[i].value)
+                    }
+                }
+                if (platforms.length > 0) {
+                    data.platform = platforms
+                }
+
+
                 // Récupère l'URL du formulaire
                 var url = document.getElementById("URform").getAttribute("action")
 
@@ -179,7 +193,7 @@ Ask a derogation at Contact.unionrolistes@gmail.com-->
                         "Content-type": "application/json",
                         Authorization: "Bearer " + "<?= $_SESSION['access_token'] ?>",
                     },
-                    body: JSON.stringify(Object.fromEntries(formData)),
+                    body: JSON.stringify(data),
                 })
                     .then(async (response) => {
                         data = {

@@ -11,7 +11,7 @@ services:
       - ../Bot_Planning_python/bot/bot/extends/:/app/extends/planing/:ro
   api:
     environment:
-      - JDR_CHANNEL=457225906075729921
+      - JDR_CHANNEL=871823753108152331
       #- LOGO_URL=
       - URL_SITE_PLANNING=http://planning.unionrolistes.fr
     volumes:
