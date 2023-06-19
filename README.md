@@ -48,3 +48,11 @@ Voir src/cog_planning/info/credits.txt
 
 **donation link**
 http://site.unionrolistes.fr/
+## Développer sous windows avec BotBase
+```cmd
+ cmd /c mklink /D ..\Bot_Base\bot\extends\Bot_planning ..\..\..\Bot_Planning_python\bot\bot\extends 
+```
+Penser à ajouter les variables d'environnement
+
+L'utilisation du lien symbolique est la meilleur solution dans ce cas.
+car copier-coler a chaque fois ou git submodule sont des solution plus compliquer a tester pour dev.
