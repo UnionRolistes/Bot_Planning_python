@@ -34,7 +34,15 @@ async def setup(bot):
 
 # loaded in bot\extends\_base\base.py
 def version():
-    return f'Planing_version : {VERSION}'
+    try:
+        # Lecture du fichier
+        with open('version.txt', 'r') as f:
+            VERSION = f.read()
+        return f'URBot_base version : {VERSION}'
+    except FileNotFoundError:
+        return 'Erreur : le fichier version.txt est introuvable.'
+    except Exception as e:
+        return f'Erreur lors de la lecture du fichier : {str(e)}'
 
 
 # loaded in bot\extends\_base\base.py
