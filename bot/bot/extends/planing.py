@@ -23,10 +23,13 @@ class Planing(commands.Cog, name='Planing'):
     @commands.command(name="cal", help="Envoie un lien pour accéder au calendrier")
     async def _cal(Self, event):
         await event.author.send(f'veuiller suivre le lient suivant : {CALENDRIER_URL}')
+        await event.channel.send("Un lien a été envoyé dans vos messages privés pour accéder au calendrier du rôliste !")
+
 
     @commands.command(name="jdr", help="Envoie un lien pour créer une partie")
     async def _jdr(Self, event):
         await event.author.send(f'veuiller suivre le lient suivant : {JDR_URL}')
+        await event.channel.send("Un lien a été envoyé dans vos messages privés pour créer un nouvel événement !")
 
 async def setup(bot):
     await bot.add_cog(Planing(bot))
