@@ -118,7 +118,7 @@ class jdrLore(str, Enum):
     Cthulhu = "Cthulhu"
     w40kDarkHeresy = "w40k-DarkHeresy"
     INSMV = "INSMV"
-    FéalsChroniqueDes = "Féals (Chronique des"
+    FéalsChroniqueDes = "Féals (Chronique des)"
     OmbresDEsteren = "Ombres d'Esteren"
     Patient13 = "Patient 13"
     Paranoïa = "Paranoïa"
