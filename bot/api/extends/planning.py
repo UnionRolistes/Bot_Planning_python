@@ -21,8 +21,8 @@ URL_SITE_PLANNING = os.getenv("URL_SITE_PLANNING", "http://planning.unionroliste
 # start
 security = HTTPBearer()
 router = APIRouter(
-    prefix="/planing",
-    tags=["planing"],
+    prefix="/planning",
+    tags=["planning"],
     responses={404: {"description": "Not found"}},
 )
 
@@ -47,9 +47,9 @@ async def check_token_dep(authorization: HTTPBearer = Depends(security)):
     else:
         raise HTTPException(status_code=401, detail="No token provided")
 
-@ router.get("/", tags=["planing"])
+@ router.get("/", tags=["planning"])
 async def prez():
-    return {"message": "Hello from planing API!"}
+    return {"message": "Hello from planning API!"}
 
 
 class JdrType(str, Enum):

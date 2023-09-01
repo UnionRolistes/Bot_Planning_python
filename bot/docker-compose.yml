@@ -6,9 +6,9 @@ services:
       - URL_SITE_CALENDRIER=http://planning.unionrolistes.fr/Calendar
       - URL_SITE_SITE= http://site.unionrolistes.fr/
       - URL_SITE_JDR=http://planning.unionrolistes.fr/
-      - BOT_PLANING_VERSION=x.x.x
+      - BOT_PLANNING_VERSION=x.x.x
     volumes:
-      - ${PWD}/../Bot_Planning_python/bot/bot/extends/:/app/extends/planing/:ro
+      - ${PWD}/../Bot_Planning_python/bot/bot/extends/:/app/extends/planning/:ro
   api:
     environment:
       - JDR_CHANNEL=871823753108152331
