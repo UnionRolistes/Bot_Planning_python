@@ -6,13 +6,13 @@ from discord.ext import commands
 from dotenv import load_dotenv
 
 load_dotenv()
-VERSION = os.getenv('BOT_PLANING_VERSION')
+VERSION = os.getenv('BOT_PLANNING_VERSION')
 CALENDRIER_URL = os.getenv('URL_SITE_CALENDRIER')
 JDR_URL = os.getenv('URL_SITE_JDR')
-print(f'VERSION_PLANING : {VERSION}')
+print(f'VERSION_PLANNING : {VERSION}')
 
 
-class Planing(commands.Cog, name='Planing'):
+class Planning(commands.Cog, name='Planning'):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self._last_member = None
@@ -32,7 +32,7 @@ class Planing(commands.Cog, name='Planing'):
         await event.channel.send("Un lien a été envoyé dans vos messages privés pour créer un nouvel événement !")
 
 async def setup(bot):
-    await bot.add_cog(Planing(bot))
+    await bot.add_cog(Planning(bot))
 
 
 # loaded in bot\extends\_base\base.py
