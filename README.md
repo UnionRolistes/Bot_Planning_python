@@ -2,7 +2,7 @@ Bot Planning
 ============
 Description
 -------------
-Le BotPlanning(Python3.7) et FormulaireJdR (HTML CSS PHP)  est un projet lancé a l'initiative de l'Union des Rôlistes (http://unionrolistes.fr)
+Le BotPlanning(Python3.8) et FormulaireJdR (HTML CSS PHP)  est un projet lancé a l'initiative de l'Union des Rôlistes (http://unionrolistes.fr)
 un bot discord capable de générer des messages correctement mis en forme, annoncant de prochaine partie de JdR, quel soit physique ou a distance.
 actuellement les message finaux sont visible sur le discord de l'union des Rôlistes via un Webhook dans la section #Planning-JdR
 .
