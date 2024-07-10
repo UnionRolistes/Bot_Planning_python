@@ -1,4 +1,4 @@
-from urpy import lcl
+from Bot_Base.src.urpy.localization import lcl
 
 on_join = lcl("🎉 Congratulations ! {user} has joined the game !")
 on_leave = lcl("😭 Despair and loneliness... {user} has left us. {user} is a meanie.")
