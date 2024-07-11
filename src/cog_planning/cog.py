@@ -12,33 +12,32 @@ import pickle
 import sys
 import logging
 import re
-from importlib import resources
 from pathlib import Path
 import os
 
-import discord
 import discord.errors
-from discord.ext import commands
 
-import urpy
-from urpy.utils import error_log, get_public_ip, get_informations, log
+from Bot_Base.src.urpy.get_ressources import get_planning_anncmnt_mdl
+from Bot_Base.src.urpy.my_commands import *
+from Bot_Base.src.urpy.utils import error_log, get_informations, log
+from Bot_Base.src.urpy.xml import Calendar
+from Bot_Base.src.bot.URbot import main, URBot
+from cgi import FieldStorage    # nécessaire pour xml.Calendar.add_event
 
-import bot.URbot
-from cog_planning.const import *
-from cog_planning import strings
-
-
-from cog_planning import settings
-import cog_planning.info
-from urpy.xml import Calendar
+import info
+from const import *
+from strings import *
 
 
-#UR_Bot © 2020 by "Association Union des Rôlistes & co" is licensed under Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA)
-#To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/4.0/
-#Ask a derogation at Contact.unionrolistes@gmail.com
+import settings
 
 
-class Planning(urpy.MyCog):
+# UR_Bot © 2020 by "Association Union des Rôlistes & co" is licensed under Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA)
+# To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/4.0/
+# Ask a derogation at Contact.unionrolistes@gmail.com
+
+
+class Planning(MyCog):
     """
     A set of commands and utils functions.
 
@@ -46,20 +45,22 @@ class Planning(urpy.MyCog):
     @mail <delpratflo@cy-tech.fr>
     @date 28/06/21
     """
-    def __init__(self, bot: bot.URbot.URBot):
+
+    def __init__(self, bot: URBot):
         """ Create a cog dedicated to Planning management. """
         super(Planning, self).__init__(bot, 'cog_planning')
         self.edit_mode_users = {}
         bot.localization.add_translation(self.domain, ['fr'])  # TODO move to urpy
         self._ = lambda s: bot.localization.gettext(s, self.domain)  # TODO partial tools
         self.planning_channel: discord.TextChannel = None
-        self.planning_announcement_model = urpy.get_planning_anncmnt_mdl()
+        self.planning_announcement_model = get_planning_anncmnt_mdl()
+        self.new_event = FieldStorage()
 
         self.bot.add_to_command('edit', self.on_edit)
         self.bot.add_to_command('done', self.on_done, self.on_cancel_or_done)
         self.bot.add_to_command('cancel', self.on_cancel, self.on_cancel_or_done)
 
-    @commands.command(brief=strings.jdr_brief, help=strings.jdr_help)
+    @commands.command(brief=jdr_brief, help=jdr_help)
     async def jdr(self, ctx: commands.Context):
         """
         Envoie un lien pour créer une partie
@@ -68,18 +69,18 @@ class Planning(urpy.MyCog):
 
         Le nom du salon est modifiable dans les paramètres.
         """
-        ctx = urpy.MyContext(ctx, delete_after=6)
+        ctx = MyContext(ctx, delete_after=6)
 
         # checks location of $jdr call
         if isinstance(ctx.channel, discord.DMChannel):
             # DM Channel
-            await ctx.send(self._(strings.on_jdr_dm_channel))
+            await ctx.send(self._(on_jdr_dm_channel))
         elif isinstance(ctx.channel, discord.TextChannel):
             # Text Channel
             anncmnt_channel = discord.utils.get(ctx.guild.channels, name=settings.announcement_channel)
             if not anncmnt_channel:
                 # Announcement channel not found
-                await ctx.send(self._(strings.on_jdr_channel_not_found).format(channel=settings.announcement_channel))
+                await ctx.send(self._(on_jdr_channel_not_found).format(channel=settings.announcement_channel))
             else:
                 # Announcement channel found
                 try:
@@ -87,16 +88,16 @@ class Planning(urpy.MyCog):
                     webhooks = await anncmnt_channel.webhooks()
                     webhook: discord.Webhook = webhooks[0]
 
-
                     cal_dir = Path(f'{settings.tmp_wh_location}')
                     cal_file = Path(f'{settings.tmp_wh_location}/wh')
 
                     if not cal_dir.is_dir():
-                        os.mkdir(f'{settings.tmp_wh_location}') # crée le dossier si il n'existe pas
+                        os.mkdir(f'{settings.tmp_wh_location}')  # crée le dossier s'il n'existe pas
                     if not cal_file.is_file():
-                        x = open(f'{settings.tmp_wh_location}/wh', "w") #Crée le fichier si il n'existe pas. Ne fait rien sinon
+                        x = open(f'{settings.tmp_wh_location}/wh',
+                                 "w")  # Crée le fichier s'il n'existe pas, sinon ne fait rien.
 
-                    if (os.stat(cal_file).st_size) != 0:
+                    if os.stat(cal_file).st_size != 0:
                         with open(f'{settings.tmp_wh_location}/wh', "rb") as f:
                             Calendar.creators_to_webhook = pickle.load(f)
 
@@ -110,57 +111,56 @@ class Planning(urpy.MyCog):
                     # Insufficient permissions
                     error_log("Impossible d'obtenir les webhooks.",
                               "Le bot nécessite la permission de gérer les webhooks")
-                    await ctx.author.send(self._(strings.on_permission_error))
+                    await ctx.author.send(self._(on_permission_error))
                 except IndexError:
                     # No webhooks found
-                    await ctx.send(self._(strings.on_jdr_webhook_not_found).format(channel=settings.announcement_channel))
+                    await ctx.send(self._(on_jdr_webhook_not_found).format(channel=settings.announcement_channel))
                 else:
                     # Webhook found
-                    await ctx.send(self._(strings.on_jdr))
+                    await ctx.send(self._(on_jdr))
                     # sends link in dm
                     await ctx.author.send(self._(
-                        strings.on_jdr_link).format(link=f'{settings.creation_form_url}')) 
-                        #strings.on_jdr_link).format(link=f'{settings.creation_form_url}?webhook={webhook.url}')) 
-                        #format(link=f'{settings.creation_form_url}?webhook={webhook.url}')) pour passer le webhook dans l'URL. Puis changer la fonction get_webhook_url dans Web_Planning/cgi/create_post.py
+                        on_jdr_link).format(link=f'{settings.creation_form_url}'))
+                    # (on_jdr_link).format(link=f'{settings.creation_form_url}?webhook={webhook.url}'))
+                    # format(link=f'{settings.creation_form_url}?webhook={webhook.url}') pour passer le webhook dans l'URL. Puis changer la fonction get_webhook_url dans Web_Planning/cgi/create_post.py
 
-
-    @commands.command(brief=strings.cal_brief, help=strings.cal_help)
+    @commands.command(brief=cal_brief, help=cal_help)
     async def cal(self, ctx: commands.Context):
         """
         Envoie le lien pour voir le calendrier (modifiable dans settings.py)
 
         """
-        ctx = urpy.MyContext(ctx, delete_after=settings.msg_delete_delay)
+        ctx = MyContext(ctx, delete_after=settings.msg_delete_delay)
 
         # checks location of $cal call
         if isinstance(ctx.channel, discord.DMChannel):
             # DM Channel
-            await ctx.send(self._(strings.on_cal_dm_channel))
+            await ctx.send(self._(on_cal_dm_channel))
         elif isinstance(ctx.channel, discord.TextChannel):
             # Text Channel
-            await ctx.send(self._(strings.on_cal))
+            await ctx.send(self._(on_cal))
             # sends link in dm
             await ctx.author.send(self._(
-                strings.on_cal_link).format(link=settings.calendar_url))
+                on_cal_link).format(link=settings.calendar_url))
 
-    @commands.command(brief=strings.cal_brief, help=strings.cal_help)
+    @commands.command(brief=cal_brief, help=cal_help)
     async def site(self, ctx: commands.Context):
         """
         Envoie le lien pour voir le site de dons (modifiable dans settings.py)
 
         """
-        ctx = urpy.MyContext(ctx, delete_after=settings.msg_delete_delay)
+        ctx = MyContext(ctx, delete_after=settings.msg_delete_delay)
 
         # checks location of $cal call
         if isinstance(ctx.channel, discord.DMChannel):
             # DM Channel
-            await ctx.send(self._(strings.on_site_dm_channel))
+            await ctx.send(self._(on_site_dm_channel))
         elif isinstance(ctx.channel, discord.TextChannel):
             # Text Channel
-            await ctx.send(self._(strings.on_site))
+            await ctx.send(self._(on_site))
             # sends link in dm
             await ctx.author.send(self._(
-                strings.on_site_link).format(link=settings.site_url))
+                on_site_link).format(link=settings.site_url))
 
     async def on_edit(self, ctx: commands.Context):
         """
@@ -168,18 +168,18 @@ class Planning(urpy.MyCog):
 
         Cette commande démarre le mode d'édition.
 
-        Vous pouvez seulement modifiez une annonce que vous avez créée.
+        Vous pouvez seulement modifier une annonce que vous avez créée.
         L'édition se déroule en mp sous la forme d'une série de questions.
         """
-        ctx = urpy.MyContext(ctx, delete_after=6)
+        ctx = MyContext(ctx, delete_after=6)
         channel = ctx.channel
 
         if isinstance(channel, discord.TextChannel) and channel.name == settings.announcement_channel:
             msg: discord.Message = ctx.message
             if not msg.reference:
-                await ctx.send(self._(strings.on_edit_without_reply))
+                await ctx.send(self._(on_edit_without_reply))
             elif not msg.reference.resolved.author.bot:
-                await ctx.send(self._(strings.on_edit_not_editable))
+                await ctx.send(self._(on_edit_not_editable))
             else:
                 msg_to_edit: discord.Message = msg.reference.resolved
 
@@ -190,25 +190,27 @@ class Planning(urpy.MyCog):
 
                     old_platfs = infos['plateformes']
 
-                    new_platfs = ", ".join(emoji_to_platform[e].capitalize() for e in old_platfs.strip().split(" ") if e)
+                    new_platfs = ", ".join(
+                        emoji_to_platform[e].capitalize() for e in old_platfs.strip().split(" ") if e)
                     infos['plateformes'] = new_platfs
                     channel: discord.TextChannel = ctx.channel
                     webhooks = await channel.webhooks()
 
                     # sends a copy of announce in the dms
                     await mj.send("", embed=discord.Embed(type='rich', description=self.create_descr(infos)))
+
                 except IndexError:
-                    await ctx.send(self._(strings.on_edit_not_editable))
+                    await ctx.send(self._(on_edit_not_editable))
                 else:
                     if mj != ctx.author:
-                        await ctx.send(self._(strings.on_edit_not_mj))
+                        await ctx.send(self._(on_edit_not_mj))
                     else:
-                        await ctx.send(self._(strings.on_edit_start))
+                        await ctx.send(self._(on_edit_start))
                         # extracts information out of the message
                         self.edit_mode_users[msg.author] = [msg_to_edit, infos, EDIT_MODE_PROMPT, "", webhooks[0]]
-                        await mj.send(self._(strings.on_edit_prompt))
+                        await mj.send(self._(on_edit_prompt))
         else:
-            await ctx.send(self._(strings.on_edit_wrong_channel))
+            await ctx.send(self._(on_edit_wrong_channel))
 
     def create_descr(self, infos, b=0):
         new_descr = self.planning_announcement_model.format(
@@ -227,16 +229,16 @@ class Planning(urpy.MyCog):
 
     @staticmethod
     def get_credits():
-        return resources.read_text(cog_planning.info, 'credits.txt')
+        return resources.read_text(info, resource="credits.txt")
 
     @staticmethod
     def get_version():
         """ Return version.txt of bot. """
-        return resources.read_text(cog_planning.info, 'version.txt')
+        return resources.read_text(info, 'version.txt')
 
     @staticmethod
     def get_name():
-        return resources.read_text(cog_planning.info, 'name.txt')
+        return resources.read_text(info, 'name.txt')
 
     @commands.Cog.listener()
     async def on_message(self, msg: discord.Message):
@@ -250,16 +252,20 @@ class Planning(urpy.MyCog):
                 if info_to_change in infos.keys():
                     self.edit_mode_users[author][3] = info_to_change
                     self.edit_mode_users[author][2] = EDIT_MODE_CONTENT
-                    await channel.send(self._(strings.on_edit_content_prompt).format(info=f"**{info_to_change.capitalize()}**"))
+                    await channel.send(self._(on_edit_content_prompt).format(info=f"**{info_to_change.capitalize()}**"))
                 else:
-                    await channel.send(self._(strings.on_edit_unrecognized))
+                    await channel.send(self._(on_edit_unrecognised))
             elif edit_mode == EDIT_MODE_CONTENT:
                 self.edit_mode_users[author][2] = EDIT_MODE_PROMPT
                 infos[info_name] = msg.content
                 await channel.send("", embed=discord.Embed(type='rich', description=self.create_descr(infos)))
-                await channel.send(self._(strings.on_edit_prompt))
+                await channel.send(self._(on_edit_prompt))
 
-        elif isinstance(channel, discord.TextChannel) and msg.author.bot and author.id != self.bot.user.id and channel.name==settings.announcement_channel:
+        elif isinstance(channel,
+                        discord.TextChannel) and msg.author.bot and author.id != self.bot.user.id and channel.name == settings.announcement_channel:
+            embed = discord.Embed(type='rich', description=self.create_descr(get_planning_anncmnt_mdl()))
+            calendar = Calendar("Web_Planning/src/www/Calendar/data/events.xml")
+            await Calendar.add_event(calendar, self.new_event, embed)   # Appel de la fonction add_event, avec : le fichier xml du calendrier, la classe FieldStorage et l'embed contenant les informations du formulaire.
             # await ctx.author.send("Création réussie, l'Union des Rôlistes vous souhaite une belle expérience !")
             await msg.add_reaction("✅")
             await msg.add_reaction("❌")
@@ -271,12 +277,12 @@ class Planning(urpy.MyCog):
             embed = msg.embeds[0].copy()
             embed.description = self.create_descr(self.edit_mode_users[ctx.author][1], 1)
             await self.edit_mode_users[ctx.author][4].edit_message(msg.id, embed=embed)
-            await ctx.send(self._(strings.on_edit_success))
+            await ctx.send(self._(on_edit_success))
 
     async def on_cancel(self, ctx: commands.Context):
         if isinstance(ctx.channel, discord.DMChannel) and ctx.author in self.edit_mode_users.keys():
             self.edit_mode_users[ctx.author][2] = EDIT_MODE_FINISHED
-            await ctx.send(self._(strings.on_edit_cancel))
+            await ctx.send(self._(on_edit_cancel))
 
     async def on_cancel_or_done(self, ctx: commands.Context):
         msg = ctx.message
@@ -301,7 +307,7 @@ class Planning(urpy.MyCog):
             try:
                 if payload.emoji.name == "✅":
                     titre = await self.get_infos(msg)
-                    mp = f"{strings.on_join} \n{titre}"
+                    mp = f"{on_join} \n{titre}"
                     await msg.remove_reaction("❌", payload.member)
                 elif payload.emoji.name == "❌":
                     check_reactions_users = await discord.utils.get(msg.reactions, emoji="✅").users().flatten()
@@ -313,13 +319,14 @@ class Planning(urpy.MyCog):
                       "Le bot nécessite la permission de gérer les messages.", file=sys.stderr)
             else:
                 if mp:
-                    #mjs_found = re.search("<@[0-9]*>", msg.embeds[0].description) #Pas utilisé
-                    mp=mp.format(user=f"<@{payload.user_id}> — {payload.member}")
+                    # mjs_found = re.search("<@[0-9]*>", msg.embeds[0].description) #Pas utilisé
+                    mp = mp.format(user=f"<@{payload.user_id}> — {payload.member}")
                     await self.send_to_mj(msg, mp)
 
-    async def get_infos(self, msg): #On peut ici choisir quelles infos envoyer en MP, en choisissant les lignes voulues de la description. Par exemple, la date et le titre (ligne 2 et 3 de la description)
-        description=str(msg.embeds[0].description)
-        title=f"----- {description.splitlines()[1]} {description.splitlines()[2]} -----"
+    async def get_infos(self,
+                        msg):  # On peut ici choisir quelles infos envoyer en MP, en choisissant les lignes voulues de la description. Par exemple, la date et le titre (ligne 2 et 3 de la description)
+        description = str(msg.embeds[0].description)
+        title = f"----- {description.splitlines()[1]} {description.splitlines()[2]} -----"
         if not title:
             print(f"ERROR:BOT | Le message {msg.id} ne mentionne pas de titre.", file=sys.stderr)
         else:
@@ -343,10 +350,10 @@ class Planning(urpy.MyCog):
         channel: discord.TextChannel = await self.bot.fetch_channel(payload.channel_id)
         if isinstance(channel, discord.TextChannel) and channel.name == 'planning-jdr' and payload.emoji.name == "✅":
             msg = await channel.fetch_message(payload.message_id)
-            mp = strings.on_leave.format(user=f"<@{payload.user_id}>")
-            
+            mp = on_leave.format(user=f"<@{payload.user_id}>")
+
             infos = await self.get_infos(msg)
-            mp = mp+f"\n{infos}"          
+            mp = mp + f"\n{infos}"
             await self.send_to_mj(msg, mp)
 
 
