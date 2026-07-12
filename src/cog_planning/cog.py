@@ -8,22 +8,18 @@ Commandes :\n
     \t$done\n
     \t$cancel\n
 """
-import pickle
 import sys
 import logging
 import re
 from importlib import resources
-from pathlib import Path
-import os
 
 import discord.errors
+from aiohttp import ClientSession
 
 from Bot_Base.src.urpy.get_ressources import get_planning_anncmnt_mdl
 from Bot_Base.src.urpy.my_commands import *
 from Bot_Base.src.urpy.utils import error_log, get_informations, log
-from Bot_Base.src.urpy.xml import Calendar
 from Bot_Base.src.bot.urbot import main, URBot
-from cgi import FieldStorage    # nécessaire pour xml.Calendar.add_event
 
 import cog_planning.info as info
 from cog_planning.const import *
@@ -55,7 +51,6 @@ class Planning(MyCog):
         self._ = lambda s: bot.localization.gettext(s, self.domain)  # TODO partial tools
         self.planning_channel: discord.TextChannel = None
         self.planning_announcement_model = get_planning_anncmnt_mdl()
-        self.new_event = FieldStorage()
 
         self.bot.add_to_command('edit', self.on_edit)
         self.bot.add_to_command('done', self.on_done, self.on_cancel_or_done)
@@ -89,24 +84,19 @@ class Planning(MyCog):
                     webhooks = await anncmnt_channel.webhooks()
                     webhook: discord.Webhook = webhooks[0]
 
-                    cal_dir = Path(f'{settings.tmp_wh_location}')
-                    cal_file = Path(f'{settings.tmp_wh_location}/wh')
-
-                    if not cal_dir.is_dir():
-                        os.mkdir(f'{settings.tmp_wh_location}')  # crée le dossier s'il n'existe pas
-                    if not cal_file.is_file():
-                        x = open(f'{settings.tmp_wh_location}/wh',
-                                 "w")  # Crée le fichier s'il n'existe pas, sinon ne fait rien.
-
-                    if os.stat(cal_file).st_size != 0:
-                        with open(f'{settings.tmp_wh_location}/wh', "rb") as f:
-                            Calendar.creators_to_webhook = pickle.load(f)
-
-                    Calendar.creators_to_webhook[ctx.author.id] = (webhook.url, webhook.guild_id, webhook.channel_id)
-                    print('Debug: Sauvegarde du webhook...')
-                    with open(f'{settings.tmp_wh_location}/wh', "wb") as f:
-                        pickle.dump(Calendar.creators_to_webhook, f)
-                        print('Debug: Webhook sauvegardé !')
+                    # Enregistre le webhook auprès de l'API planning (remplace l'ancien
+                    # fichier pickle local, illisible depuis le CGI de Web_Planning une
+                    # fois le bot et le site dans des conteneurs séparés).
+                    async with ClientSession() as session:
+                        async with session.post(
+                                f'{settings.planning_api_base_url}/webhooks',
+                                json={
+                                    'user_id': ctx.author.id,
+                                    'webhook_url': webhook.url,
+                                    'guild_id': webhook.guild_id,
+                                    'channel_id': webhook.channel_id,
+                                }) as resp:
+                            resp.raise_for_status()
 
                 except discord.errors.Forbidden:
                     # Insufficient permissions
@@ -122,8 +112,6 @@ class Planning(MyCog):
                     # sends link in dm
                     await ctx.author.send(self._(
                         on_jdr_link).format(link=f'{settings.creation_form_url}'))
-                    # (on_jdr_link).format(link=f'{settings.creation_form_url}?webhook={webhook.url}'))
-                    # format(link=f'{settings.creation_form_url}?webhook={webhook.url}') pour passer le webhook dans l'URL. Puis changer la fonction get_webhook_url dans Web_Planning/cgi/create_post.py
 
     @commands.command(brief=cal_brief, help=cal_help)
     async def cal(self, ctx: commands.Context):
@@ -264,10 +252,9 @@ class Planning(MyCog):
 
         elif isinstance(channel,
                         discord.TextChannel) and msg.author.bot and author.id != self.bot.user.id and channel.name == settings.announcement_channel:
-            embed = discord.Embed(type='rich', description=self.create_descr(get_planning_anncmnt_mdl()))
-            calendar = Calendar("Web_Planning/src/www/Calendar/data/events.xml")
-            await Calendar.add_event(calendar, self.new_event, embed)   # Appel de la fonction add_event, avec : le fichier xml du calendrier, la classe FieldStorage et l'embed contenant les informations du formulaire.
-            # await ctx.author.send("Création réussie, l'Union des Rôlistes vous souhaite une belle expérience !")
+            # L'annonce elle-même (embed + persistance dans events.xml) est déjà faite par
+            # l'API planning au moment de la soumission du formulaire (POST /events) ; ce
+            # message webhook n'a plus qu'à recevoir les réactions d'inscription.
             await msg.add_reaction("✅")
             await msg.add_reaction("❌")
 
