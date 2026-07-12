@@ -24,12 +24,12 @@ from Bot_Base.src.urpy.xml import Calendar
 from Bot_Base.src.bot.urbot import main, URBot
 from cgi import FieldStorage    # nécessaire pour xml.Calendar.add_event
 
-import info
-from const import *
-from strings import *
+import cog_planning.info as info
+from cog_planning.const import *
+from cog_planning.strings import *
 
 
-import settings
+from cog_planning import settings
 
 
 # UR_Bot © 2020 by "Association Union des Rôlistes & co" is licensed under Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA)
