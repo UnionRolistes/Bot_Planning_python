@@ -12,6 +12,7 @@ import pickle
 import sys
 import logging
 import re
+from importlib import resources
 from pathlib import Path
 import os
 
@@ -288,7 +289,8 @@ class Planning(MyCog):
         msg = ctx.message
         author = ctx.author
 
-        del self.edit_mode_users[author]
+        if author in self.edit_mode_users:
+            del self.edit_mode_users[author]
 
     @commands.Cog.listener()
     async def on_ready(self):
