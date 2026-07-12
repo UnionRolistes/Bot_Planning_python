@@ -21,7 +21,7 @@ from Bot_Base.src.urpy.get_ressources import get_planning_anncmnt_mdl
 from Bot_Base.src.urpy.my_commands import *
 from Bot_Base.src.urpy.utils import error_log, get_informations, log
 from Bot_Base.src.urpy.xml import Calendar
-from Bot_Base.src.bot.URbot import main, URBot
+from Bot_Base.src.bot.urbot import main, URBot
 from cgi import FieldStorage    # nécessaire pour xml.Calendar.add_event
 
 import info
