@@ -19,6 +19,7 @@ from aiohttp import ClientSession
 from Bot_Base.src.urpy.get_ressources import get_planning_anncmnt_mdl
 from Bot_Base.src.urpy.my_commands import *
 from Bot_Base.src.urpy.utils import error_log, get_informations, log
+from Bot_Base.src.urpy.utils import colored_message, SUCCESS_COLOR, ERROR_COLOR
 from Bot_Base.src.bot.urbot import main, URBot
 
 import cog_planning.info as info
@@ -70,7 +71,7 @@ class Planning(MyCog):
         # checks location of $jdr call
         if isinstance(ctx.channel, discord.DMChannel):
             # DM Channel
-            await ctx.send(self._(on_jdr_dm_channel))
+            await ctx.send(colored_message(self._(on_jdr_dm_channel), ERROR_COLOR))
         elif isinstance(ctx.channel, discord.TextChannel):
             # Text Channel
             anncmnt_channel = discord.utils.get(ctx.guild.channels, name=settings.announcement_channel)
@@ -102,13 +103,13 @@ class Planning(MyCog):
                     # Insufficient permissions
                     error_log("Impossible d'obtenir les webhooks.",
                               "Le bot nécessite la permission de gérer les webhooks")
-                    await ctx.author.send(self._(on_permission_error))
+                    await ctx.author.send(colored_message(self._(on_permission_error), ERROR_COLOR))
                 except IndexError:
                     # No webhooks found
                     await ctx.send(self._(on_jdr_webhook_not_found).format(channel=settings.announcement_channel))
                 else:
                     # Webhook found
-                    await ctx.send(self._(on_jdr))
+                    await ctx.send(colored_message(self._(on_jdr), SUCCESS_COLOR))
                     # sends link in dm
                     await ctx.author.send(self._(
                         on_jdr_link).format(link=f'{settings.creation_form_url}'))
@@ -124,10 +125,10 @@ class Planning(MyCog):
         # checks location of $cal call
         if isinstance(ctx.channel, discord.DMChannel):
             # DM Channel
-            await ctx.send(self._(on_cal_dm_channel))
+            await ctx.send(colored_message(self._(on_cal_dm_channel), ERROR_COLOR))
         elif isinstance(ctx.channel, discord.TextChannel):
             # Text Channel
-            await ctx.send(self._(on_cal))
+            await ctx.send(colored_message(self._(on_cal), SUCCESS_COLOR))
             # sends link in dm
             await ctx.author.send(self._(
                 on_cal_link).format(link=settings.calendar_url))
@@ -143,10 +144,10 @@ class Planning(MyCog):
         # checks location of $cal call
         if isinstance(ctx.channel, discord.DMChannel):
             # DM Channel
-            await ctx.send(self._(on_site_dm_channel))
+            await ctx.send(colored_message(self._(on_site_dm_channel), ERROR_COLOR))
         elif isinstance(ctx.channel, discord.TextChannel):
             # Text Channel
-            await ctx.send(self._(on_site))
+            await ctx.send(colored_message(self._(on_site), SUCCESS_COLOR))
             # sends link in dm
             await ctx.author.send(self._(
                 on_site_link).format(link=settings.site_url))
@@ -166,9 +167,9 @@ class Planning(MyCog):
         if isinstance(channel, discord.TextChannel) and channel.name == settings.announcement_channel:
             msg: discord.Message = ctx.message
             if not msg.reference:
-                await ctx.send(self._(on_edit_without_reply))
+                await ctx.send(colored_message(self._(on_edit_without_reply), ERROR_COLOR))
             elif not msg.reference.resolved.author.bot:
-                await ctx.send(self._(on_edit_not_editable))
+                await ctx.send(colored_message(self._(on_edit_not_editable), ERROR_COLOR))
             else:
                 msg_to_edit: discord.Message = msg.reference.resolved
 
@@ -189,17 +190,17 @@ class Planning(MyCog):
                     await mj.send("", embed=discord.Embed(type='rich', description=self.create_descr(infos)))
 
                 except IndexError:
-                    await ctx.send(self._(on_edit_not_editable))
+                    await ctx.send(colored_message(self._(on_edit_not_editable), ERROR_COLOR))
                 else:
                     if mj != ctx.author:
-                        await ctx.send(self._(on_edit_not_mj))
+                        await ctx.send(colored_message(self._(on_edit_not_mj), ERROR_COLOR))
                     else:
-                        await ctx.send(self._(on_edit_start))
+                        await ctx.send(colored_message(self._(on_edit_start), SUCCESS_COLOR))
                         # extracts information out of the message
                         self.edit_mode_users[msg.author] = [msg_to_edit, infos, EDIT_MODE_PROMPT, "", webhooks[0]]
                         await mj.send(self._(on_edit_prompt))
         else:
-            await ctx.send(self._(on_edit_wrong_channel))
+            await ctx.send(colored_message(self._(on_edit_wrong_channel), ERROR_COLOR))
 
     def create_descr(self, infos, b=0):
         new_descr = self.planning_announcement_model.format(
@@ -265,12 +266,12 @@ class Planning(MyCog):
             embed = msg.embeds[0].copy()
             embed.description = self.create_descr(self.edit_mode_users[ctx.author][1], 1)
             await self.edit_mode_users[ctx.author][4].edit_message(msg.id, embed=embed)
-            await ctx.send(self._(on_edit_success))
+            await ctx.send(colored_message(self._(on_edit_success), SUCCESS_COLOR))
 
     async def on_cancel(self, ctx: commands.Context):
         if isinstance(ctx.channel, discord.DMChannel) and ctx.author in self.edit_mode_users.keys():
             self.edit_mode_users[ctx.author][2] = EDIT_MODE_FINISHED
-            await ctx.send(self._(on_edit_cancel))
+            await ctx.send(colored_message(self._(on_edit_cancel), SUCCESS_COLOR))
 
     async def on_cancel_or_done(self, ctx: commands.Context):
         msg = ctx.message
