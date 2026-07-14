@@ -1,4 +1,3 @@
-
 <?php
 require('config.php');
 require('settings.php'); //Pour le lien du site
