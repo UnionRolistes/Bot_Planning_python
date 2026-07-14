@@ -1,0 +1,192 @@
+/*Pour les éléments communs aux 2 affichages*/
+/*UR_Bot © 2020 by "Association Union des Rôlistes & co" is licensed under Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA)
+To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-sa/4.0/
+Ask a derogation at Contact.unionrolistes@gmail.com*/
+
+body{
+  background-color: #23272A;
+  margin: 0;
+  padding: 0;
+  color: white;
+}
+.flex-horizontal {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.titleCenter{
+  text-align: center;
+}
+
+
+/*Calendrier scrollable tout en gardant les jours à l'écran :*/
+
+header, .header, .titleCenter{
+  z-index: 6;
+  position: sticky;
+  overflow: auto;
+  top: 0;
+  background-color: #23272A;
+}
+.header{
+  top: 105px;
+}
+.titleCenter{
+  top: 78px;
+}
+
+
+/* Designing for scroll-bar */
+::-webkit-scrollbar {
+  width: 7px;
+}
+/* Track */
+::-webkit-scrollbar-track {
+  background: gainsboro;
+  border-radius: 5px;
+}
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: black;
+  border-radius: 5px;
+}
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+
+
+/*Pour les boutons :*/
+
+.switch-container{
+  margin-left: auto; 
+  margin-right: 0;
+}
+.btn-container{
+  margin: 0 auto;
+  width: 15%; 
+}
+
+
+
+
+/*Pour la grille :*/
+
+li{
+  list-style: none;
+}
+
+ul{
+  margin: 0;
+  padding: 0;
+}
+   
+.calendar{ 
+  display: grid;
+  grid-template-columns: 50px auto;
+  grid-template-rows: auto;
+  gap: 1px 1px;
+  grid-template-areas: 
+  ".header"
+  "timeslots-container main"; /*Definit les areas*/
+}
+
+.weekDays,
+.dayNumbers-container{
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /*1fr 1fr 1fr 1fr 2fr 2fr 3fr ;*/ /*14% 14% 14% 14% 30% 14% 14%;*/
+}
+
+.weekDays{
+  background: #7289DA;
+}
+
+.header{
+  background: #23272A;
+  grid-area: header;
+}
+
+.timeslots-container{
+  background: lightgray;
+  grid-area: timeslots-container;
+  justify-content: left;
+}
+
+.timeslots{
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+}
+
+.timeslots li{
+  min-height: 60px;
+}
+
+.dayNumbers-container li{
+  min-height: 2 em;
+}
+
+
+
+/* Pour faire les lignes de grille :*/
+.timeslots li::after{
+  content: "";
+  position: absolute;
+  left: 10px;
+  width: 100%;
+  height: 1px;
+  background: 1px gray;
+}
+
+
+/*Pour les events*/
+
+.event-container{
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(48, 1fr); /*24 heures x 2 divisions : On veut une précision à la demie heure près. Si on voulait 1/4 quart d'heure, on fait 24 x 4*/
+  grid-area: main; /*Associe à l'area main*/
+  position: relative;
+}
+
+.slot{ 
+  position:absolute; /*relative donne un rendu bizarre*/
+  background: green;
+  border-radius: 5px;
+  z-index: 5; /*Pour afficher au 1er plan, au dessus des lignes*/
+  font-size: 12px;
+  overflow: auto;
+
+  display: inline;
+  min-width: 12vw;
+  max-width: 12vw;
+  border: 1px solid black;
+}
+.slot a{
+  color: white;
+  text-decoration: underline;
+}
+
+
+/*Pour le responsive et affichage mobile :*/
+@-ms-viewport {
+  width: device-width;
+}
+
+
+@media screen and (max-width:770px){
+  /* Pour les ecrans de moins de 770 pixels de large */
+
+  .slot{
+    font-size:10px;
+  }
+
+  .header{
+    top: 155px;
+  }
+  .titleCenter{
+    top: 78px;
+  }
+}

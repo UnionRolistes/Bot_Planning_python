@@ -1,0 +1,48 @@
+@import url("styleCalendar.css"); /* --> CSS pour les éléments communs aux 2 pages */
+
+
+/*Pour la grille :*/
+
+.calendar{ 
+  grid-template-columns: 50px auto;
+}
+
+.weekDays,
+.dayNumbers-container{
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.timeslots li{
+  min-height: 180px;
+}
+
+
+.slotMonth{
+  text-decoration: none;
+  color:white;
+}
+
+.border {
+  position: absolute;
+  left: 1fr;
+  width: 2px;
+  height: 125%;
+  background: 1px gray;
+  right: -9px
+}
+
+
+/*Pour le responsive et affichage mobile :*/
+@-ms-viewport {
+  width: device-width;
+}
+
+
+@media screen and (max-width:1330px){
+  /* Pour les ecrans de moins de 1330 pixels de large (correspond au moment où les textes des vignettes passent à la ligne de pas beaucoup */
+
+  .slot{
+    font-size:10px;
+  }
+}

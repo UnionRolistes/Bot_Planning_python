@@ -1,0 +1,33 @@
+################################################################
+# Site web + formulaire de création d'événement (planning.unionrolistes.fr).
+# Déployé comme stack Komodo séparée de celle du bot lui-même (web_planning
+# vs base_base) — même repo, conteneurs indépendants.
+################################################################
+services:
+  web-planning:
+    build:
+      context: web
+      dockerfile: Dockerfile
+    container_name: web-planning
+    restart: unless-stopped
+    ports:
+      - "8082:80"
+    networks:
+      - default
+      - bot_base_default
+    volumes:
+      # Même événements que planning-api (Bot_Base/api-data/events.xml,
+      # chemin hôte absolu car web-planning et planning-api sont deux
+      # stacks/clones différents) — un seul fichier, deux lecteurs/écrivains.
+      - /usr/local/src/Bot_Base/api-data:/var/www/html/Calendar/data
+    environment:
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
+      - DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET}
+      - DISCORD_REDIRECT_URI=${DISCORD_REDIRECT_URI}
+      - CALENDAR_ADMIN_USER=${CALENDAR_ADMIN_USER}
+      - CALENDAR_ADMIN_PASSWORD=${CALENDAR_ADMIN_PASSWORD}
+      - PLANNING_API_BASE_URL=http://planning-api:3000
+
+networks:
+  bot_base_default:
+    external: true
