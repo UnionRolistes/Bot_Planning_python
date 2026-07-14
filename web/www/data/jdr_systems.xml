@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<systems>
+    <optgroup label="JdR Générique">
+        <option>Brigandyne</option>
+        <option>HomeBrew</option>
+        <option>D-Critique</option>
+        <option>GURPS</option>
+        <option>PbtA</option>
+        <option>SavageWolrd</option>
+        <option>Tiny</option>
+        <option>Trash</option>
+    </optgroup>
+    <optgroup label="JdR Médiéval Fantastique / épic">
+        <option>Agone</option>
+        <option>Anima</option>
+        <option>Antika</option>
+        <option>Ars Magica</option>
+        <option>Ciels_Cuivre</option>
+        <option>D&amp;D (d&amp;d, Ad&amp;d, chronique, pathfinder)</option>
+        <option>Ad&amp;d</option>
+        <option>Chronique oubliées</option>
+        <option>Pathfinder</option>
+        <option>Défis Fantastiques</option>
+        <option>DiscWorld</option>
+        <option>DragonAge</option>
+        <option>Gobelin qui s'en dédit</option>
+        <option>GoT</option>
+        <option>Impertor</option>
+        <option>L5R</option>
+        <option>LiberChronicle</option>
+        <option>MyLittlePony</option>
+        <option>Naheulbeuk</option>
+        <option>Rêve de Dragon</option>
+        <option>Ryuutama</option>
+        <option>Tolkien</option>
+        <option>Shaan</option>
+        <option>Sword and Sorcery</option>
+        <option>Yggdrasil</option>
+        <option>Ynn Pryddein</option>
+        <option>WarHammer</option>
+    </optgroup>
+    <optgroup label="JdR Pirate / renaissance">
+        <option>7e-mer</option>
+        <option>Pavillion Noir</option>
+        <option>Cardinal (Les lames Du)</option>
+    </optgroup>
+    <optgroup label="JdR Western">
+        <option>DeadLands</option>
+    </optgroup>
+    <optgroup label="JdR Contemporain">
+        <option>Cats</option>
+        <option>Heroes (super et mutant Xmen)</option>
+        <option>HP</option>
+        <option>Tiny</option>
+        <option>Nephilim</option>
+    </optgroup>
+    <optgroup label="JdR Futuriste / post apo">
+        <option>COPS</option>
+        <option>Cyberpunk</option>
+        <option>Dégénésis</option>
+        <option>Eclipse phase</option>
+        <option>FallOut</option>
+        <option>Knight</option>
+        <option>Metal Adv</option>
+        <option>Numenéra</option>
+        <option>Polaris</option>
+        <option>Starwars</option>
+        <option>Terra X</option>
+        <option>Zombie</option>
+    </optgroup>
+    <optgroup label="JdR Dark / sexe / drogue / rock'n roll">
+        <option>BloodLust</option>
+        <option>Cthulhu</option>
+        <option>w40k-DarkHeresy</option>
+        <option>INSMV</option>
+        <option>Féals (Chronique des</option>
+        <option>Ombres d'Esteren</option>
+        <option>Patient 13</option>
+        <option>Paranoïa</option>
+        <option>Vampire</option>
+        <option>Scion</option>
+        <option>Sombre</option>
+        <option>Tales from the loop</option>
+    </optgroup>
+</systems>
