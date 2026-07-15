@@ -7,10 +7,13 @@
 # CGI Apache.
 FROM php:8.4-apache
 
+# curl est déjà compilé statiquement dans php:8.4-apache (php -m | grep curl
+# le montre sans rien installer) — docker-php-ext-install curl ne servait
+# qu'à recompiler une extension déjà présente. apache2-utils reste
+# nécessaire : htpasswd est appelé par docker-entrypoint.sh au démarrage
+# pour générer .htpasswd depuis un secret Komodo.
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libcurl4-openssl-dev \
     apache2-utils \
-    && docker-php-ext-install curl \
     && a2enmod rewrite \
     && rm -rf /var/lib/apt/lists/*
 
